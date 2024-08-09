@@ -1,0 +1,19 @@
+[package]
+name = "demo"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description.workspace = true
+license.workspace = true
+readme.workspace = true
+homepage.workspace = true
+repository.workspace = true
+documentation.workspace = true
+
+[dependencies]
+bmbp_lib_ui = { workspace = true }
+bmbp_rbac = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+salvo = { workspace = true }
+tokio = { workspace = true }
