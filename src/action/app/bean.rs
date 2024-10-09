@@ -1,9 +1,8 @@
 use bmbp_marco::bean;
-use bmbp_marco::table_rdbc_tree_bean_orm_option;
+use bmbp_marco::table_rdbc_bean_orm_option;
 use bmbp_rdbc::RdbcIdent;
 use bmbp_rdbc::RdbcOrmRow;
 use bmbp_rdbc::RdbcTable;
-use bmbp_util::BmbpTree;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -13,7 +12,8 @@ pub struct BatchReqVo {
 }
 
 // 角色信息
-#[table_rdbc_tree_bean_orm_option(BMBP_RBAC_APP_MENU, menu)]
-pub struct BmbpRbacMenu {
-    app_id: Option<String>,
+#[table_rdbc_bean_orm_option(BMBP_RBAC_APP)]
+pub struct BmbpRbacApp {
+    app_code: Option<String>,
+    app_name: Option<String>,
 }
