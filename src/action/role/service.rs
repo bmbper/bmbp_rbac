@@ -66,7 +66,7 @@ impl BmbpRbacRoleService {
             if role.is_none() {
                 return Err(BmbpRespErr::err(
                     Some("DB".to_string()),
-                    Some("未找到参数信息".to_string()),
+                    Some("未找到角色信息".to_string()),
                 ));
             }
             query_wrapper.not_like_left_(
@@ -138,7 +138,7 @@ impl BmbpRbacRoleService {
         {
             return Err(BmbpRespErr::err(
                 Some("VALID".to_string()),
-                Some("请传入参数编码".to_string()),
+                Some("请传入角色编码".to_string()),
             ));
         } else {
             let mut role_code = params.get_role_code().clone().unwrap_or("".to_string());
@@ -151,7 +151,7 @@ impl BmbpRbacRoleService {
         {
             return Err(BmbpRespErr::err(
                 Some("VALID".to_string()),
-                Some("请传入参数名称".to_string()),
+                Some("请传入角色名称".to_string()),
             ));
         } else {
             let mut role_name = params.get_role_name().clone().unwrap_or("".to_string());
@@ -184,16 +184,16 @@ impl BmbpRbacRoleService {
                     Some("父级节点信息异常,请联系管理员".to_string()),
                 ));
             }
-            params.set_role_code_path(Some(format!("{}{}.", parent_code_path, role_code)));
-            params.set_role_name_path(Some(format!("{}{}.", parent_name_path, role_name)));
+            params.set_role_code_path(Some(format!("{}{}/", parent_code_path, role_code)));
+            params.set_role_name_path(Some(format!("{}{}/", parent_name_path, role_name)));
         } else {
             params.set_role_code_path(Some(format!(
-                "{}.{}.",
+                "{}/{}/",
                 params.get_role_parent_code().as_ref().unwrap(),
                 role_code
             )));
             params.set_role_name_path(Some(format!(
-                "{}.{}.",
+                "{}/{}/",
                 params.get_role_parent_code().as_ref().unwrap(),
                 role_name
             )));
@@ -203,7 +203,7 @@ impl BmbpRbacRoleService {
             .get_role_code_path()
             .as_ref()
             .unwrap()
-            .split(".")
+            .split("/")
             .count()
             - 2;
         params.set_role_tree_grade(Some(tree_grade as u32));
@@ -310,7 +310,7 @@ impl BmbpRbacRoleService {
         if params.get_data_id().is_none() {
             return Err(BmbpRespErr::err(
                 Some("VALID".to_string()),
-                Some("请传入参数标识".to_string()),
+                Some("请传入角色标识".to_string()),
             ));
         }
 
@@ -318,7 +318,7 @@ impl BmbpRbacRoleService {
         if role_info_op.is_none() {
             return Err(BmbpRespErr::err(
                 Some("REQUEST".to_string()),
-                Some("未找到参数信息".to_string()),
+                Some("未找到角色信息".to_string()),
             ));
         }
         let role_info = role_info_op.unwrap();
@@ -355,12 +355,12 @@ impl BmbpRbacRoleService {
         {
             (
                 format!(
-                    "{}.{}.",
+                    "{}/{}/",
                     BMBP_TREE_ROOT_NODE.to_string(),
                     params.get_role_code().as_ref().unwrap()
                 ),
                 format!(
-                    "{}.{}.",
+                    "{}/{}/",
                     BMBP_TREE_ROOT_NODE.to_string(),
                     params.get_role_name().as_ref().unwrap()
                 ),
@@ -371,26 +371,26 @@ impl BmbpRbacRoleService {
             if parent_node_op.is_none() {
                 return Err(BmbpRespErr::err(
                     Some("REQUEST".to_string()),
-                    Some("未找到上级参数信息".to_string()),
+                    Some("未找到上级角色信息".to_string()),
                 ));
             }
 
             let parent_node = parent_node_op.unwrap();
             (
                 format!(
-                    "{}{}.",
+                    "{}{}/",
                     parent_node.get_role_code_path().clone().unwrap(),
                     params.get_role_code().clone().unwrap()
                 ),
                 format!(
-                    "{}{}.",
+                    "{}{}/",
                     parent_node.get_role_name_path().clone().unwrap(),
                     params.get_role_name().as_ref().unwrap()
                 ),
             )
         };
 
-        let tree_grade = &role_code_path.split(".").count() - 2;
+        let tree_grade = &role_code_path.split("/").count() - 2;
         params.set_role_tree_grade(Some(tree_grade as u32));
 
         // 校验别名是否重复
@@ -472,7 +472,7 @@ impl BmbpRbacRoleService {
         if role_info.is_none() {
             return Err(BmbpRespErr::err(
                 Some("SERVICE".to_string()),
-                Some("未找到参数信息".to_string()),
+                Some("未找到角色信息".to_string()),
             ));
         }
         let code_path = role_info
@@ -482,7 +482,7 @@ impl BmbpRbacRoleService {
             .as_ref()
             .unwrap()
             .clone();
-        let code_vec: Vec<&str> = code_path.split('.').filter(|&s| !s.is_empty()).collect();
+        let code_vec: Vec<&str> = code_path.split('/').filter(|&s| !s.is_empty()).collect();
         print!("==>{:#?}", code_vec);
         let mut update_wrapper = UpdateWrapper::new();
         update_wrapper.set("data_status", "1");
@@ -517,7 +517,7 @@ impl BmbpRbacRoleService {
         if role_info.is_none() {
             return Err(BmbpRespErr::err(
                 Some("SERVICE".to_string()),
-                Some("未找到参数信息".to_string()),
+                Some("未找到角色信息".to_string()),
             ));
         }
         let code_path = role_info
@@ -560,7 +560,7 @@ impl BmbpRbacRoleService {
         if role_info.is_none() {
             return Err(BmbpRespErr::err(
                 Some("SERVICE".to_string()),
-                Some("未找到参数信息".to_string()),
+                Some("未找到角色信息".to_string()),
             ));
         }
         let code_path = role_info
@@ -603,7 +603,7 @@ impl BmbpRbacRoleService {
         if params.get_data_id().is_none() || params.get_data_id().as_ref().unwrap().is_empty() {
             return Err(BmbpRespErr::err(
                 Some("REQUEST".to_string()),
-                Some("参数标识不能为空".to_string()),
+                Some("角色标识不能为空".to_string()),
             ));
         }
         Self::role_update(depot, params).await?;
@@ -621,7 +621,7 @@ impl BmbpRbacRoleService {
                 if role.is_none() {
                     return Err(BmbpRespErr::err(
                         Some("DB".to_string()),
-                        Some("未找到参数信息".to_string()),
+                        Some("未找到角色信息".to_string()),
                     ));
                 }
                 query_wrapper.like_left_(BmbpRbacRoleColumn::RoleCodePath, role_id.clone());
@@ -662,7 +662,7 @@ impl BmbpRbacRoleService {
                 if role.is_some() {
                     Err(BmbpRespErr::err(
                         Some("REQUEST".to_string()),
-                        Some("参数编码已存在".to_string()),
+                        Some("角色编码已存在".to_string()),
                     ))
                 } else {
                     Ok(())
@@ -689,7 +689,7 @@ impl BmbpRbacRoleService {
                 if role.is_some() {
                     Err(BmbpRespErr::err(
                         Some("REQUEST".to_string()),
-                        Some("参数名称已存在".to_string()),
+                        Some("角色名称已存在".to_string()),
                     ))
                 } else {
                     Ok(())

@@ -1,3 +1,4 @@
-pub mod action;
+mod action;
 mod bean;
 mod service;
+pub use action::*;

@@ -66,7 +66,7 @@ impl BmbpRbacOrganService {
             if organ.is_none() {
                 return Err(BmbpRespErr::err(
                     Some("DB".to_string()),
-                    Some("未找到参数信息".to_string()),
+                    Some("未找到组织信息".to_string()),
                 ));
             }
             query_wrapper.not_like_left_(
@@ -141,7 +141,7 @@ impl BmbpRbacOrganService {
         {
             return Err(BmbpRespErr::err(
                 Some("VALID".to_string()),
-                Some("请传入参数编码".to_string()),
+                Some("请传入组织编码".to_string()),
             ));
         } else {
             let mut organ_code = params.get_organ_code().clone().unwrap_or("".to_string());
@@ -154,7 +154,7 @@ impl BmbpRbacOrganService {
         {
             return Err(BmbpRespErr::err(
                 Some("VALID".to_string()),
-                Some("请传入参数名称".to_string()),
+                Some("请传入组织名称".to_string()),
             ));
         } else {
             let mut organ_name = params.get_organ_name().clone().unwrap_or("".to_string());
@@ -187,16 +187,16 @@ impl BmbpRbacOrganService {
                     Some("父级节点信息异常,请联系管理员".to_string()),
                 ));
             }
-            params.set_organ_code_path(Some(format!("{}{}.", parent_code_path, organ_code)));
-            params.set_organ_name_path(Some(format!("{}{}.", parent_name_path, organ_name)));
+            params.set_organ_code_path(Some(format!("{}{}/", parent_code_path, organ_code)));
+            params.set_organ_name_path(Some(format!("{}{}/", parent_name_path, organ_name)));
         } else {
             params.set_organ_code_path(Some(format!(
-                "{}.{}.",
+                "{}/{}/",
                 params.get_organ_parent_code().as_ref().unwrap(),
                 organ_code
             )));
             params.set_organ_name_path(Some(format!(
-                "{}.{}.",
+                "{}/{}/",
                 params.get_organ_parent_code().as_ref().unwrap(),
                 organ_name
             )));
@@ -206,7 +206,7 @@ impl BmbpRbacOrganService {
             .get_organ_code_path()
             .as_ref()
             .unwrap()
-            .split(".")
+            .split("/")
             .count()
             - 2;
         params.set_organ_tree_grade(Some(tree_grade as u32));
@@ -313,7 +313,7 @@ impl BmbpRbacOrganService {
         if params.get_data_id().is_none() {
             return Err(BmbpRespErr::err(
                 Some("VALID".to_string()),
-                Some("请传入参数标识".to_string()),
+                Some("请传入组织标识".to_string()),
             ));
         }
 
@@ -321,7 +321,7 @@ impl BmbpRbacOrganService {
         if organ_info_op.is_none() {
             return Err(BmbpRespErr::err(
                 Some("REQUEST".to_string()),
-                Some("未找到参数信息".to_string()),
+                Some("未找到组织信息".to_string()),
             ));
         }
         let organ_info = organ_info_op.unwrap();
@@ -357,12 +357,12 @@ impl BmbpRbacOrganService {
             if params.get_organ_parent_code().as_ref().unwrap() == BMBP_TREE_ROOT_NODE {
                 (
                     format!(
-                        "{}.{}.",
+                        "{}/{}/",
                         BMBP_TREE_ROOT_NODE.to_string(),
                         params.get_organ_code().as_ref().unwrap()
                     ),
                     format!(
-                        "{}.{}.",
+                        "{}/{}/",
                         BMBP_TREE_ROOT_NODE.to_string(),
                         params.get_organ_name().as_ref().unwrap()
                     ),
@@ -374,26 +374,26 @@ impl BmbpRbacOrganService {
                 if parent_node_op.is_none() {
                     return Err(BmbpRespErr::err(
                         Some("REQUEST".to_string()),
-                        Some("未找到上级参数信息".to_string()),
+                        Some("未找到上级组织信息".to_string()),
                     ));
                 }
 
                 let parent_node = parent_node_op.unwrap();
                 (
                     format!(
-                        "{}{}.",
+                        "{}{}/",
                         parent_node.get_organ_code_path().clone().unwrap(),
                         params.get_organ_code().clone().unwrap()
                     ),
                     format!(
-                        "{}{}.",
+                        "{}{}/",
                         parent_node.get_organ_name_path().clone().unwrap(),
                         params.get_organ_name().as_ref().unwrap()
                     ),
                 )
             };
 
-        let tree_grade = &organ_code_path.split(".").count() - 2;
+        let tree_grade = &organ_code_path.split("/").count() - 2;
         params.set_organ_tree_grade(Some(tree_grade as u32));
 
         // 校验别名是否重复
@@ -475,7 +475,7 @@ impl BmbpRbacOrganService {
         if organ_info.is_none() {
             return Err(BmbpRespErr::err(
                 Some("SERVICE".to_string()),
-                Some("未找到参数信息".to_string()),
+                Some("未找到组织信息".to_string()),
             ));
         }
         let code_path = organ_info
@@ -485,7 +485,7 @@ impl BmbpRbacOrganService {
             .as_ref()
             .unwrap()
             .clone();
-        let code_vec: Vec<&str> = code_path.split('.').filter(|&s| !s.is_empty()).collect();
+        let code_vec: Vec<&str> = code_path.split('/').filter(|&s| !s.is_empty()).collect();
         print!("==>{:#?}", code_vec);
         let mut update_wrapper = UpdateWrapper::new();
         update_wrapper.set("data_status", "1");
@@ -520,7 +520,7 @@ impl BmbpRbacOrganService {
         if organ_info.is_none() {
             return Err(BmbpRespErr::err(
                 Some("SERVICE".to_string()),
-                Some("未找到参数信息".to_string()),
+                Some("未找到组织信息".to_string()),
             ));
         }
         let code_path = organ_info
@@ -563,7 +563,7 @@ impl BmbpRbacOrganService {
         if organ_info.is_none() {
             return Err(BmbpRespErr::err(
                 Some("SERVICE".to_string()),
-                Some("未找到参数信息".to_string()),
+                Some("未找到组织信息".to_string()),
             ));
         }
         let code_path = organ_info
@@ -606,7 +606,7 @@ impl BmbpRbacOrganService {
         if params.get_data_id().is_none() || params.get_data_id().as_ref().unwrap().is_empty() {
             return Err(BmbpRespErr::err(
                 Some("REQUEST".to_string()),
-                Some("参数标识不能为空".to_string()),
+                Some("组织标识不能为空".to_string()),
             ));
         }
         Self::organ_update(depot, params).await?;
@@ -624,7 +624,7 @@ impl BmbpRbacOrganService {
                 if organ.is_none() {
                     return Err(BmbpRespErr::err(
                         Some("DB".to_string()),
-                        Some("未找到参数信息".to_string()),
+                        Some("未找到组织信息".to_string()),
                     ));
                 }
                 query_wrapper.like_left_(BmbpRbacOrganColumn::OrganCodePath, organ_id.clone());
@@ -668,7 +668,7 @@ impl BmbpRbacOrganService {
                 if organ.is_some() {
                     Err(BmbpRespErr::err(
                         Some("REQUEST".to_string()),
-                        Some("参数编码已存在".to_string()),
+                        Some("组织编码已存在".to_string()),
                     ))
                 } else {
                     Ok(())
@@ -695,7 +695,7 @@ impl BmbpRbacOrganService {
                 if organ.is_some() {
                     Err(BmbpRespErr::err(
                         Some("REQUEST".to_string()),
-                        Some("参数名称已存在".to_string()),
+                        Some("组织名称已存在".to_string()),
                     ))
                 } else {
                     Ok(())

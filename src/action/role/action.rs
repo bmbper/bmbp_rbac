@@ -15,7 +15,7 @@ pub async fn role_find_tree(
 ) -> BmbpResp<RespVo<Vec<BmbpRbacRole>>> {
     let params = req.parse_json::<BmbpRbacRole>().await?;
     let data = BmbpRbacRoleService::role_find_tree(depot, &params).await?;
-    Ok(RespVo::ok_data_msg(data, "查询参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "查询角色成功!".to_string()))
 }
 
 #[handler]
@@ -27,7 +27,7 @@ pub async fn role_find_page(
     let params = req.parse_json::<BmbpPageReq<BmbpRbacRole>>().await?;
     tracing::debug!("page params:{:#?}", params);
     let data = BmbpRbacRoleService::role_find_page(depot, &params).await?;
-    Ok(RespVo::ok_data_msg(data, "查询参数分页成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "查询角色分页成功!".to_string()))
 }
 
 #[handler]
@@ -38,7 +38,7 @@ pub async fn role_find_list(
 ) -> BmbpResp<RespVo<Vec<BmbpRbacRole>>> {
     let params = req.parse_json::<BmbpRbacRole>().await?;
     let data = BmbpRbacRoleService::role_find_list(depot, &params).await?;
-    Ok(RespVo::ok_data_msg(data, "查询参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "查询角色成功!".to_string()))
 }
 
 #[handler]
@@ -49,7 +49,7 @@ pub async fn role_find_tree_ignore(
 ) -> BmbpResp<RespVo<Vec<BmbpRbacRole>>> {
     let params = req.parse_json::<BmbpRbacRole>().await?;
     let data = BmbpRbacRoleService::role_find_tree_ignore(depot, &params).await?;
-    Ok(RespVo::ok_data_msg(data, "查询参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "查询角色成功!".to_string()))
 }
 
 #[handler]
@@ -60,7 +60,7 @@ pub async fn role_find_info(
 ) -> BmbpResp<RespVo<BmbpRbacRole>> {
     let role_id = req.query::<String>("dataId");
     let data = BmbpRbacRoleService::role_find_info(depot, role_id.as_ref()).await?;
-    Ok(RespVo::ok_data_msg(data, "查询参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "查询角色成功!".to_string()))
 }
 
 #[handler]
@@ -71,7 +71,7 @@ pub async fn role_save(
 ) -> BmbpResp<RespVo<BmbpRbacRole>> {
     let mut params = req.parse_json::<BmbpRbacRole>().await?;
     let data = BmbpRbacRoleService::role_save(depot, &mut params).await?;
-    Ok(RespVo::ok_data_msg(data, "保存参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "保存角色成功!".to_string()))
 }
 
 #[handler]
@@ -82,7 +82,7 @@ pub async fn role_insert(
 ) -> BmbpResp<RespVo<BmbpRbacRole>> {
     let mut params = req.parse_json::<BmbpRbacRole>().await?;
     let data = BmbpRbacRoleService::role_insert(depot, &mut params).await?;
-    Ok(RespVo::ok_data_msg(data, "新增参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "新增角色成功!".to_string()))
 }
 
 #[handler]
@@ -93,7 +93,7 @@ pub async fn role_update(
 ) -> BmbpResp<RespVo<BmbpRbacRole>> {
     let mut params = req.parse_json::<BmbpRbacRole>().await?;
     let data = BmbpRbacRoleService::role_update(depot, &mut params).await?;
-    Ok(RespVo::ok_data_msg(data, "更新参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "更新角色成功!".to_string()))
 }
 
 #[handler]
@@ -104,7 +104,7 @@ pub async fn role_enable(
 ) -> BmbpResp<RespVo<u64>> {
     let role_id = req.query::<String>("dataId");
     let data = BmbpRbacRoleService::role_enable(depot, role_id.as_ref()).await?;
-    Ok(RespVo::ok_data_msg(data, "启用参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "启用角色成功!".to_string()))
 }
 
 #[handler]
@@ -115,7 +115,7 @@ pub async fn role_disable(
 ) -> BmbpResp<RespVo<u64>> {
     let role_id = req.query::<String>("dataId");
     let data = BmbpRbacRoleService::role_disable(depot, role_id.as_ref()).await?;
-    Ok(RespVo::ok_data_msg(data, "停用参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "停用角色成功!".to_string()))
 }
 
 #[handler]
@@ -126,7 +126,7 @@ pub async fn role_batch_enable(
 ) -> BmbpResp<RespVo<u64>> {
     let role_req = req.parse_json::<BatchReqVo>().await?;
     let data = BmbpRbacRoleService::role_batch_enable(depot, &role_req).await?;
-    Ok(RespVo::ok_data_msg(data, "启用参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "启用角色成功!".to_string()))
 }
 
 #[handler]
@@ -137,7 +137,7 @@ pub async fn role_batch_disable(
 ) -> BmbpResp<RespVo<u64>> {
     let role_req = req.parse_json::<BatchReqVo>().await?;
     let data = BmbpRbacRoleService::role_batch_disable(depot, &role_req).await?;
-    Ok(RespVo::ok_data_msg(data, "停用参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "停用角色成功!".to_string()))
 }
 
 #[handler]
@@ -148,7 +148,7 @@ pub async fn role_remove(
 ) -> BmbpResp<RespVo<u64>> {
     let role_id = req.query::<String>("dataId");
     let data = BmbpRbacRoleService::role_remove(depot, role_id.as_ref()).await?;
-    Ok(RespVo::ok_data_msg(data, "删除参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "删除角色成功!".to_string()))
 }
 
 #[handler]
@@ -159,7 +159,7 @@ pub async fn role_batch_remove(
 ) -> BmbpResp<RespVo<u64>> {
     let role_req = req.parse_json::<BatchReqVo>().await?;
     let data = BmbpRbacRoleService::role_batch_remove(depot, &role_req).await?;
-    Ok(RespVo::ok_data_msg(data, "删除参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "删除角色成功!".to_string()))
 }
 
 #[handler]
@@ -170,5 +170,5 @@ pub async fn role_update_parent(
 ) -> BmbpResp<RespVo<u64>> {
     let mut params = req.parse_json::<BmbpRbacRole>().await?;
     let data = BmbpRbacRoleService::role_update_parent(depot, &mut params).await?;
-    Ok(RespVo::ok_data_msg(data, "更新上级参数成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "更新上级角色成功!".to_string()))
 }
