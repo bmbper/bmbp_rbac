@@ -2,6 +2,7 @@ use action::app::*;
 use action::menu::*;
 use action::organ::*;
 use action::role::*;
+use action::user::*;
 use init::build_bmbp_static_router;
 use salvo::prelude::*;
 use view::{app_view, menu_view, organ_view, role_view, user_view};
@@ -87,14 +88,24 @@ pub fn build_bmbp_rbac_router() -> Router {
                     .push(Router::with_path("batch/remove").post(menu_batch_remove))
                     .push(Router::with_path("update/parent").post(menu_update_parent))
                     .push(Router::with_path("index.view").get(menu_view)),
+            )
+            .push(
+                Router::with_path("user")
+                    .push(Router::with_path("page").post(user_find_page))
+                    .push(Router::with_path("list").post(user_find_list))
+                    .push(Router::with_path("info").post(user_find_info))
+                    .push(Router::with_path("save").post(user_save))
+                    .push(Router::with_path("insert").post(user_insert))
+                    .push(Router::with_path("update").post(user_update))
+                    .push(Router::with_path("enable").post(user_enable))
+                    .push(Router::with_path("batch/enable").post(user_batch_enable))
+                    .push(Router::with_path("disable").post(user_disable))
+                    .push(Router::with_path("batch/disable").post(user_batch_disable))
+                    .push(Router::with_path("remove").post(user_remove))
+                    .push(Router::with_path("batch/remove").post(user_batch_remove))
+                    .push(Router::with_path("index.view").get(user_view)),
             ),
     );
     router = router.push(action_router);
-    // view router
-    let view_router = Router::with_path("rbac")
-        .push(Router::with_path("user.view").get(user_view))
-        .push(Router::with_path("app.view").get(app_view));
-
-    router = router.push(view_router);
     return router;
 }

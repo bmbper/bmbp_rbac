@@ -1,7 +1,7 @@
 use crate::ctx::ctx_init;
 use crate::init::CTX_TERA;
 use salvo::prelude::Text;
-use salvo::{handler, Depot, Request, Response};
+use salvo::{handler, Request, Response};
 
 #[handler]
 pub async fn app_view(_: &mut Request, resp: &mut Response) {
