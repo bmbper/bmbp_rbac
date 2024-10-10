@@ -1,3 +1,4 @@
+use action::app::*;
 use action::menu::*;
 use action::organ::*;
 use action::role::*;
@@ -51,6 +52,22 @@ pub fn build_bmbp_rbac_router() -> Router {
                     .push(Router::with_path("batch/remove").post(role_batch_remove))
                     .push(Router::with_path("update/parent").post(role_update_parent))
                     .push(Router::with_path("index.view").get(role_view)),
+            )
+            .push(
+                Router::with_path("app")
+                    .push(Router::with_path("page").post(app_find_page))
+                    .push(Router::with_path("list").post(app_find_list))
+                    .push(Router::with_path("info").post(app_find_info))
+                    .push(Router::with_path("save").post(app_save))
+                    .push(Router::with_path("insert").post(app_insert))
+                    .push(Router::with_path("update").post(app_update))
+                    .push(Router::with_path("enable").post(app_enable))
+                    .push(Router::with_path("batch/enable").post(app_batch_enable))
+                    .push(Router::with_path("disable").post(app_disable))
+                    .push(Router::with_path("batch/disable").post(app_batch_disable))
+                    .push(Router::with_path("remove").post(app_remove))
+                    .push(Router::with_path("batch/remove").post(app_batch_remove))
+                    .push(Router::with_path("index.view").get(app_view)),
             )
             .push(
                 Router::with_path("menu")
