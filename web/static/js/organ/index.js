@@ -45,9 +45,9 @@ var PageAction = {
     });
     PageState.pageData = pageData;
     PageState.setPageData = setPageData;
-    const [currentVarsData, setCurrentVarsData] = React.useState({});
-    PageState.currentVarsData = currentVarsData;
-    PageState.setCurrentVarsData = setCurrentVarsData;
+    const [currentOrganData, setCurrentOrganData] = React.useState({});
+    PageState.currentOrganData = currentOrganData;
+    PageState.setCurrentOrganData = setCurrentOrganData;
     const [addFormDialogVisible, setAddFormDialogVisible] = React.useState(false);
     PageState.addFormDialogVisible = addFormDialogVisible;
     PageState.setAddFormDialogVisible = setAddFormDialogVisible;
@@ -60,9 +60,9 @@ var PageAction = {
     const [changeParentFormDialogVisible, setChangeParentFormDialogVisible] = React.useState(false);
     PageState.changeParentFormDialogVisible = changeParentFormDialogVisible;
     PageState.setChangeParentFormDialogVisible = setChangeParentFormDialogVisible;
-    const [waitChangeVarsDataId, setWaitChangeVarsDataId] = React.useState("");
-    PageState.waitChangeVarsDataId = waitChangeVarsDataId;
-    PageState.setWaitChangeVarsDataId = setWaitChangeVarsDataId;
+    const [waitChangeOrganDataId, setWaitChangeOrganDataId] = React.useState("");
+    PageState.waitChangeOrganDataId = waitChangeOrganDataId;
+    PageState.setWaitChangeOrganDataId = setWaitChangeOrganDataId;
     const [parentTreeData, setParentTreeData] = React.useState([]);
     PageState.parentTreeData = parentTreeData;
     PageState.setParentTreeData = setParentTreeData;
@@ -148,7 +148,7 @@ var PageAction = {
     let currentData = {
       organParentCode
     };
-    PageState.setCurrentVarsData(currentData);
+    PageState.setCurrentOrganData(currentData);
     PageState.setAddFormDialogVisible(true);
   },
   addChildNode: (node) => {
@@ -163,14 +163,14 @@ var PageAction = {
     let currentData = {
       organParentCode
     };
-    PageState.setCurrentVarsData(currentData);
+    PageState.setCurrentOrganData(currentData);
     PageState.setAddFormDialogVisible(true);
   },
   editNode: (node) => {
     let dataId = node.dataId;
     axios.post(PageUrl.findInfoUrl + "?dataId=" + dataId, {}).then((resp) => {
       if (resp.code == 0) {
-        PageState.setCurrentVarsData(resp.data);
+        PageState.setCurrentOrganData(resp.data);
         PageState.setEditFormDialogVisible(true);
       } else {
         arco.Message.error(resp.msg);
@@ -208,7 +208,7 @@ var PageAction = {
     });
   },
   batchRemoveNode: (keys) => {
-    console.log("delVars");
+    console.log("delOrgan");
   },
   enableNode: (node) => {
     axios.post(PageUrl.enableUrl + "?dataId=" + node.dataId, {}).then((resp) => {
@@ -231,14 +231,14 @@ var PageAction = {
     });
   },
   changeParentNode: (node) => {
-    PageState.setWaitChangeVarsDataId(node.dataId);
+    PageState.setWaitChangeOrganDataId(node.dataId);
     PageState.setChangeParentFormDialogVisible(true);
   },
   viewInfo(node) {
     let dataId = node.dataId;
     axios.post(PageUrl.findInfoUrl + "?dataId=" + dataId, {}).then((resp) => {
       if (resp.code == 0) {
-        PageState.setCurrentVarsData(resp.data);
+        PageState.setCurrentOrganData(resp.data);
         PageState.setInfoFormDialogVisible(true);
       } else {
         arco.Message.error(resp.msg);

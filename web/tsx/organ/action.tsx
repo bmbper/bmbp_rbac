@@ -61,9 +61,9 @@ export const PageAction = {
     });
     PageState.pageData = pageData;
     PageState.setPageData = setPageData;
-    const [currentVarsData, setCurrentVarsData] = React.useState({});
-    PageState.currentVarsData = currentVarsData;
-    PageState.setCurrentVarsData = setCurrentVarsData;
+    const [currentOrganData, setCurrentOrganData] = React.useState({});
+    PageState.currentOrganData = currentOrganData;
+    PageState.setCurrentOrganData = setCurrentOrganData;
     // 新增参数
     const [addFormDialogVisible, setAddFormDialogVisible] =
       React.useState(false);
@@ -86,9 +86,10 @@ export const PageAction = {
     PageState.setChangeParentFormDialogVisible =
       setChangeParentFormDialogVisible;
     // 待变更的参数
-    const [waitChangeVarsDataId, setWaitChangeVarsDataId] = React.useState("");
-    PageState.waitChangeVarsDataId = waitChangeVarsDataId;
-    PageState.setWaitChangeVarsDataId = setWaitChangeVarsDataId;
+    const [waitChangeOrganDataId, setWaitChangeOrganDataId] =
+      React.useState("");
+    PageState.waitChangeOrganDataId = waitChangeOrganDataId;
+    PageState.setWaitChangeOrganDataId = setWaitChangeOrganDataId;
     const [parentTreeData, setParentTreeData] = React.useState([]);
     PageState.parentTreeData = parentTreeData;
     PageState.setParentTreeData = setParentTreeData;
@@ -191,7 +192,7 @@ export const PageAction = {
     let currentData = {
       organParentCode: organParentCode,
     };
-    PageState.setCurrentVarsData(currentData);
+    PageState.setCurrentOrganData(currentData);
     PageState.setAddFormDialogVisible(true);
   },
   addChildNode: (node: any) => {
@@ -209,7 +210,7 @@ export const PageAction = {
     let currentData = {
       organParentCode: organParentCode,
     };
-    PageState.setCurrentVarsData(currentData);
+    PageState.setCurrentOrganData(currentData);
     PageState.setAddFormDialogVisible(true);
   },
   editNode: (node: any) => {
@@ -218,7 +219,7 @@ export const PageAction = {
       .post(PageUrl.findInfoUrl + "?dataId=" + dataId, {})
       .then((resp: any) => {
         if (resp.code == 0) {
-          PageState.setCurrentVarsData(resp.data);
+          PageState.setCurrentOrganData(resp.data);
           PageState.setEditFormDialogVisible(true);
         } else {
           arco.Message.error(resp.msg);
@@ -258,7 +259,7 @@ export const PageAction = {
       });
   },
   batchRemoveNode: (keys: String[]) => {
-    console.log("delVars");
+    console.log("delOrgan");
   },
   enableNode: (node: any) => {
     axios
@@ -285,7 +286,7 @@ export const PageAction = {
       });
   },
   changeParentNode: (node) => {
-    PageState.setWaitChangeVarsDataId(node.dataId);
+    PageState.setWaitChangeOrganDataId(node.dataId);
     PageState.setChangeParentFormDialogVisible(true);
   },
 
@@ -295,7 +296,7 @@ export const PageAction = {
       .post(PageUrl.findInfoUrl + "?dataId=" + dataId, {})
       .then((resp: any) => {
         if (resp.code == 0) {
-          PageState.setCurrentVarsData(resp.data);
+          PageState.setCurrentOrganData(resp.data);
           PageState.setInfoFormDialogVisible(true);
         } else {
           arco.Message.error(resp.msg);

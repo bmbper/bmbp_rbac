@@ -45,9 +45,9 @@ var PageAction = {
     });
     PageState.pageData = pageData;
     PageState.setPageData = setPageData;
-    const [currentVarsData, setCurrentVarsData] = React.useState({});
-    PageState.currentVarsData = currentVarsData;
-    PageState.setCurrentVarsData = setCurrentVarsData;
+    const [currentMenuData, setCurrentMenuData] = React.useState({});
+    PageState.currentMenuData = currentMenuData;
+    PageState.setCurrentMenuData = setCurrentMenuData;
     const [addFormDialogVisible, setAddFormDialogVisible] = React.useState(false);
     PageState.addFormDialogVisible = addFormDialogVisible;
     PageState.setAddFormDialogVisible = setAddFormDialogVisible;
@@ -60,9 +60,9 @@ var PageAction = {
     const [changeParentFormDialogVisible, setChangeParentFormDialogVisible] = React.useState(false);
     PageState.changeParentFormDialogVisible = changeParentFormDialogVisible;
     PageState.setChangeParentFormDialogVisible = setChangeParentFormDialogVisible;
-    const [waitChangeVarsDataId, setWaitChangeVarsDataId] = React.useState("");
-    PageState.waitChangeVarsDataId = waitChangeVarsDataId;
-    PageState.setWaitChangeVarsDataId = setWaitChangeVarsDataId;
+    const [waitChangeMenuDataId, setWaitChangeMenuDataId] = React.useState("");
+    PageState.waitChangeMenuDataId = waitChangeMenuDataId;
+    PageState.setWaitChangeMenuDataId = setWaitChangeMenuDataId;
     const [parentTreeData, setParentTreeData] = React.useState([]);
     PageState.parentTreeData = parentTreeData;
     PageState.setParentTreeData = setParentTreeData;
@@ -148,7 +148,7 @@ var PageAction = {
     let currentData = {
       menuParentCode
     };
-    PageState.setCurrentVarsData(currentData);
+    PageState.setCurrentMenuData(currentData);
     PageState.setAddFormDialogVisible(true);
   },
   addChildNode: (node) => {
@@ -163,14 +163,14 @@ var PageAction = {
     let currentData = {
       menuParentCode
     };
-    PageState.setCurrentVarsData(currentData);
+    PageState.setCurrentMenuData(currentData);
     PageState.setAddFormDialogVisible(true);
   },
   editNode: (node) => {
     let dataId = node.dataId;
     axios.post(PageUrl.findInfoUrl + "?dataId=" + dataId, {}).then((resp) => {
       if (resp.code == 0) {
-        PageState.setCurrentVarsData(resp.data);
+        PageState.setCurrentMenuData(resp.data);
         PageState.setEditFormDialogVisible(true);
       } else {
         arco.Message.error(resp.msg);
@@ -208,7 +208,7 @@ var PageAction = {
     });
   },
   batchRemoveNode: (keys) => {
-    console.log("delVars");
+    console.log("delMenu");
   },
   enableNode: (node) => {
     axios.post(PageUrl.enableUrl + "?dataId=" + node.dataId, {}).then((resp) => {
@@ -231,14 +231,14 @@ var PageAction = {
     });
   },
   changeParentNode: (node) => {
-    PageState.setWaitChangeVarsDataId(node.dataId);
+    PageState.setWaitChangeMenuDataId(node.dataId);
     PageState.setChangeParentFormDialogVisible(true);
   },
   viewInfo(node) {
     let dataId = node.dataId;
     axios.post(PageUrl.findInfoUrl + "?dataId=" + dataId, {}).then((resp) => {
       if (resp.code == 0) {
-        PageState.setCurrentVarsData(resp.data);
+        PageState.setCurrentMenuData(resp.data);
         PageState.setInfoFormDialogVisible(true);
       } else {
         arco.Message.error(resp.msg);

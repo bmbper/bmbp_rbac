@@ -45,9 +45,9 @@ var PageAction = {
     });
     PageState.pageData = pageData;
     PageState.setPageData = setPageData;
-    const [currentVarsData, setCurrentVarsData] = React.useState({});
-    PageState.currentVarsData = currentVarsData;
-    PageState.setCurrentVarsData = setCurrentVarsData;
+    const [currentAppGroupData, setCurrentAppGroupData] = React.useState({});
+    PageState.currentAppGroupData = currentAppGroupData;
+    PageState.setCurrentAppGroupData = setCurrentAppGroupData;
     const [addFormDialogVisible, setAddFormDialogVisible] = React.useState(false);
     PageState.addFormDialogVisible = addFormDialogVisible;
     PageState.setAddFormDialogVisible = setAddFormDialogVisible;
@@ -60,9 +60,9 @@ var PageAction = {
     const [changeParentFormDialogVisible, setChangeParentFormDialogVisible] = React.useState(false);
     PageState.changeParentFormDialogVisible = changeParentFormDialogVisible;
     PageState.setChangeParentFormDialogVisible = setChangeParentFormDialogVisible;
-    const [waitChangeVarsDataId, setWaitChangeVarsDataId] = React.useState("");
-    PageState.waitChangeVarsDataId = waitChangeVarsDataId;
-    PageState.setWaitChangeVarsDataId = setWaitChangeVarsDataId;
+    const [waitChangeAppGroupDataId, setWaitChangeAppGroupDataId] = React.useState("");
+    PageState.waitChangeAppGroupDataId = waitChangeAppGroupDataId;
+    PageState.setWaitChangeAppGroupDataId = setWaitChangeAppGroupDataId;
     const [parentTreeData, setParentTreeData] = React.useState([]);
     PageState.parentTreeData = parentTreeData;
     PageState.setParentTreeData = setParentTreeData;
@@ -148,7 +148,7 @@ var PageAction = {
     let currentData = {
       appGroupParentCode
     };
-    PageState.setCurrentVarsData(currentData);
+    PageState.setCurrentAppGroupData(currentData);
     PageState.setAddFormDialogVisible(true);
   },
   addChildNode: (node) => {
@@ -163,14 +163,14 @@ var PageAction = {
     let currentData = {
       appGroupParentCode
     };
-    PageState.setCurrentVarsData(currentData);
+    PageState.setCurrentAppGroupData(currentData);
     PageState.setAddFormDialogVisible(true);
   },
   editNode: (node) => {
     let dataId = node.dataId;
     axios.post(PageUrl.findInfoUrl + "?dataId=" + dataId, {}).then((resp) => {
       if (resp.code == 0) {
-        PageState.setCurrentVarsData(resp.data);
+        PageState.setCurrentAppGroupData(resp.data);
         PageState.setEditFormDialogVisible(true);
       } else {
         arco.Message.error(resp.msg);
@@ -208,7 +208,7 @@ var PageAction = {
     });
   },
   batchRemoveNode: (keys) => {
-    console.log("delVars");
+    console.log("delAppGroup");
   },
   enableNode: (node) => {
     axios.post(PageUrl.enableUrl + "?dataId=" + node.dataId, {}).then((resp) => {
@@ -231,14 +231,14 @@ var PageAction = {
     });
   },
   changeParentNode: (node) => {
-    PageState.setWaitChangeVarsDataId(node.dataId);
+    PageState.setWaitChangeAppGroupDataId(node.dataId);
     PageState.setChangeParentFormDialogVisible(true);
   },
   viewInfo(node) {
     let dataId = node.dataId;
     axios.post(PageUrl.findInfoUrl + "?dataId=" + dataId, {}).then((resp) => {
       if (resp.code == 0) {
-        PageState.setCurrentVarsData(resp.data);
+        PageState.setCurrentAppGroupData(resp.data);
         PageState.setInfoFormDialogVisible(true);
       } else {
         arco.Message.error(resp.msg);
@@ -263,31 +263,31 @@ var AppGroupForm = () => {
   }, /* @__PURE__ */ React.createElement(arco.Input, {
     placeholder: ""
   })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
-    label: "\u4E0A\u7EA7\u7EC4\u7EC7\u7F16\u7801",
-    field: "app_groupParentCode",
+    label: "\u4E0A\u7EA7\u5206\u7EC4\u7F16\u7801",
+    field: "appGroupParentCode",
     hidden: true
   }, /* @__PURE__ */ React.createElement(arco.Input, {
     placeholder: ""
   })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
-    label: "\u7EC4\u7EC7\u540D\u79F0",
-    field: "app_groupName",
-    rules: [{ required: true, message: "\u8BF7\u8F93\u5165\u7EC4\u7EC7\u540D\u79F0" }]
+    label: "\u5206\u7EC4\u540D\u79F0",
+    field: "appGroupName",
+    rules: [{ required: true, message: "\u8BF7\u8F93\u5165\u5206\u7EC4\u540D\u79F0" }]
   }, /* @__PURE__ */ React.createElement(arco.Input, {
-    placeholder: "\u8BF7\u8F93\u5165\u7EC4\u7EC7\u540D\u79F0"
+    placeholder: "\u8BF7\u8F93\u5165\u5206\u7EC4\u540D\u79F0"
   })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
-    label: "\u7EC4\u7EC7\u7F16\u7801",
-    field: "app_groupCode",
-    rules: [{ required: true, message: "\u8BF7\u8F93\u5165\u7EC4\u7EC7\u7F16\u7801" }]
+    label: "\u5206\u7EC4\u7F16\u7801",
+    field: "appGroupCode",
+    rules: [{ required: true, message: "\u8BF7\u8F93\u5165\u5206\u7EC4\u7F16\u7801" }]
   }, /* @__PURE__ */ React.createElement(arco.Input, {
-    placeholder: "\u8BF7\u8F93\u5165\u7EC4\u7EC7\u522B\u540D"
+    placeholder: "\u8BF7\u8F93\u5165\u5206\u7EC4\u522B\u540D"
   })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
-    label: "\u7EC4\u7EC7\u7C7B\u578B",
-    field: "app_groupType"
+    label: "\u5206\u7EC4\u7C7B\u578B",
+    field: "appGroupType"
   }, /* @__PURE__ */ React.createElement(arco.Input, {
-    placeholder: "\u8BF7\u8F93\u5165\u7EC4\u7EC7\u503C"
+    placeholder: "\u8BF7\u8F93\u5165\u5206\u7EC4\u503C"
   })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
     label: "\u6392\u5E8F",
-    field: "app_groupOrder"
+    field: "appGroupOrder"
   }, /* @__PURE__ */ React.createElement(arco.InputNumber, {
     placeholder: "\u8BF7\u8F93\u5165\u987A\u5E8F"
   })));
@@ -307,31 +307,31 @@ var AppGroupInfoForm = () => {
   }, /* @__PURE__ */ React.createElement(arco.Input, {
     placeholder: ""
   })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
-    label: "\u4E0A\u7EA7\u7EC4\u7EC7\u7F16\u7801",
-    field: "app_groupParentCode",
+    label: "\u4E0A\u7EA7\u5206\u7EC4\u7F16\u7801",
+    field: "appGroupParentCode",
     hidden: true
   }, /* @__PURE__ */ React.createElement(arco.Input, {
     placeholder: ""
   })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
-    label: "\u7EC4\u7EC7\u540D\u79F0",
-    field: "app_groupName",
-    rules: [{ required: true, message: "\u8BF7\u8F93\u5165\u7EC4\u7EC7\u540D\u79F0" }]
+    label: "\u5206\u7EC4\u540D\u79F0",
+    field: "appGroupName",
+    rules: [{ required: true, message: "\u8BF7\u8F93\u5165\u5206\u7EC4\u540D\u79F0" }]
   }, /* @__PURE__ */ React.createElement(arco.Input, {
-    placeholder: "\u8BF7\u8F93\u5165\u7EC4\u7EC7\u540D\u79F0"
+    placeholder: "\u8BF7\u8F93\u5165\u5206\u7EC4\u540D\u79F0"
   })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
-    label: "\u7EC4\u7EC7\u7F16\u7801",
-    field: "app_groupCode",
-    rules: [{ required: true, message: "\u8BF7\u8F93\u5165\u7EC4\u7EC7\u7F16\u7801" }]
+    label: "\u5206\u7EC4\u7F16\u7801",
+    field: "appGroupCode",
+    rules: [{ required: true, message: "\u8BF7\u8F93\u5165\u5206\u7EC4\u7F16\u7801" }]
   }, /* @__PURE__ */ React.createElement(arco.Input, {
-    placeholder: "\u8BF7\u8F93\u5165\u7EC4\u7EC7\u7F16\u7801"
+    placeholder: "\u8BF7\u8F93\u5165\u5206\u7EC4\u7F16\u7801"
   })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
-    label: "\u7EC4\u7EC7\u7C7B\u578B",
-    field: "app_groupType"
+    label: "\u5206\u7EC4\u7C7B\u578B",
+    field: "appGroupType"
   }, /* @__PURE__ */ React.createElement(arco.Input, {
-    placeholder: "\u8BF7\u8F93\u5165\u7EC4\u7EC7\u503C"
+    placeholder: "\u8BF7\u8F93\u5165\u5206\u7EC4\u503C"
   })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
     label: "\u6392\u5E8F",
-    field: "app_groupOrder"
+    field: "appGroupOrder"
   }, /* @__PURE__ */ React.createElement(arco.InputNumber, {
     placeholder: "\u8BF7\u8F93\u5165\u987A\u5E8F"
   })));
@@ -354,17 +354,17 @@ var AppGroupParentForm = () => {
   }, /* @__PURE__ */ React.createElement(arco.Input, {
     placeholder: ""
   })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
-    label: "\u76EE\u6807\u7EC4\u7EC7",
-    field: "app_groupParentCode",
+    label: "\u76EE\u6807\u5206\u7EC4",
+    field: "appGroupParentCode",
     hidden: false
   }, /* @__PURE__ */ React.createElement(arco.TreeSelect, {
     treeData: PageState.parentTreeData,
     fieldNames: {
-      key: "app_groupCode",
-      title: "app_groupName",
-      children: "app_groupChildren"
+      key: "appGroupCode",
+      title: "appGroupName",
+      children: "appGroupChildren"
     },
-    placeholder: "\u8BF7\u9009\u62E9\u76EE\u6807\u7EC4\u7EC7"
+    placeholder: "\u8BF7\u9009\u62E9\u76EE\u6807\u5206\u7EC4"
   })));
 };
 

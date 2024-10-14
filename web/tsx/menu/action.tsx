@@ -61,9 +61,9 @@ export const PageAction = {
     });
     PageState.pageData = pageData;
     PageState.setPageData = setPageData;
-    const [currentVarsData, setCurrentVarsData] = React.useState({});
-    PageState.currentVarsData = currentVarsData;
-    PageState.setCurrentVarsData = setCurrentVarsData;
+    const [currentMenuData, setCurrentMenuData] = React.useState({});
+    PageState.currentMenuData = currentMenuData;
+    PageState.setCurrentMenuData = setCurrentMenuData;
     // 新增参数
     const [addFormDialogVisible, setAddFormDialogVisible] =
       React.useState(false);
@@ -86,9 +86,9 @@ export const PageAction = {
     PageState.setChangeParentFormDialogVisible =
       setChangeParentFormDialogVisible;
     // 待变更的参数
-    const [waitChangeVarsDataId, setWaitChangeVarsDataId] = React.useState("");
-    PageState.waitChangeVarsDataId = waitChangeVarsDataId;
-    PageState.setWaitChangeVarsDataId = setWaitChangeVarsDataId;
+    const [waitChangeMenuDataId, setWaitChangeMenuDataId] = React.useState("");
+    PageState.waitChangeMenuDataId = waitChangeMenuDataId;
+    PageState.setWaitChangeMenuDataId = setWaitChangeMenuDataId;
     const [parentTreeData, setParentTreeData] = React.useState([]);
     PageState.parentTreeData = parentTreeData;
     PageState.setParentTreeData = setParentTreeData;
@@ -191,7 +191,7 @@ export const PageAction = {
     let currentData = {
       menuParentCode: menuParentCode,
     };
-    PageState.setCurrentVarsData(currentData);
+    PageState.setCurrentMenuData(currentData);
     PageState.setAddFormDialogVisible(true);
   },
   addChildNode: (node: any) => {
@@ -209,7 +209,7 @@ export const PageAction = {
     let currentData = {
       menuParentCode: menuParentCode,
     };
-    PageState.setCurrentVarsData(currentData);
+    PageState.setCurrentMenuData(currentData);
     PageState.setAddFormDialogVisible(true);
   },
   editNode: (node: any) => {
@@ -218,7 +218,7 @@ export const PageAction = {
       .post(PageUrl.findInfoUrl + "?dataId=" + dataId, {})
       .then((resp: any) => {
         if (resp.code == 0) {
-          PageState.setCurrentVarsData(resp.data);
+          PageState.setCurrentMenuData(resp.data);
           PageState.setEditFormDialogVisible(true);
         } else {
           arco.Message.error(resp.msg);
@@ -258,7 +258,7 @@ export const PageAction = {
       });
   },
   batchRemoveNode: (keys: String[]) => {
-    console.log("delVars");
+    console.log("delMenu");
   },
   enableNode: (node: any) => {
     axios
@@ -285,7 +285,7 @@ export const PageAction = {
       });
   },
   changeParentNode: (node) => {
-    PageState.setWaitChangeVarsDataId(node.dataId);
+    PageState.setWaitChangeMenuDataId(node.dataId);
     PageState.setChangeParentFormDialogVisible(true);
   },
 
@@ -295,7 +295,7 @@ export const PageAction = {
       .post(PageUrl.findInfoUrl + "?dataId=" + dataId, {})
       .then((resp: any) => {
         if (resp.code == 0) {
-          PageState.setCurrentVarsData(resp.data);
+          PageState.setCurrentMenuData(resp.data);
           PageState.setInfoFormDialogVisible(true);
         } else {
           arco.Message.error(resp.msg);

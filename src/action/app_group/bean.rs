@@ -14,6 +14,4 @@ pub struct BatchReqVo {
 
 // 角色信息
 #[table_rdbc_tree_bean_orm_option(BMBP_RBAC_APP_GROUP, app_group)]
-pub struct BmbpRbacAppGroup {
-    app_id: Option<String>,
-}
+pub struct BmbpRbacAppGroup {}

@@ -14,30 +14,30 @@ export const AppGroupForm = () => {
         <arco.Input placeholder="" />
       </arco.Form.Item>
       <arco.Form.Item
-        label="上级组织编码"
-        field="app_groupParentCode"
+        label="上级分组编码"
+        field="appGroupParentCode"
         hidden={true}
       >
         <arco.Input placeholder="" />
       </arco.Form.Item>
       <arco.Form.Item
-        label="组织名称"
-        field="app_groupName"
-        rules={[{ required: true, message: "请输入组织名称" }]}
+        label="分组名称"
+        field="appGroupName"
+        rules={[{ required: true, message: "请输入分组名称" }]}
       >
-        <arco.Input placeholder="请输入组织名称" />
+        <arco.Input placeholder="请输入分组名称" />
       </arco.Form.Item>
       <arco.Form.Item
-        label="组织编码"
-        field="app_groupCode"
-        rules={[{ required: true, message: "请输入组织编码" }]}
+        label="分组编码"
+        field="appGroupCode"
+        rules={[{ required: true, message: "请输入分组编码" }]}
       >
-        <arco.Input placeholder="请输入组织别名" />
+        <arco.Input placeholder="请输入分组别名" />
       </arco.Form.Item>
-      <arco.Form.Item label="组织类型" field="app_groupType">
-        <arco.Input placeholder="请输入组织值" />
+      <arco.Form.Item label="分组类型" field="appGroupType">
+        <arco.Input placeholder="请输入分组值" />
       </arco.Form.Item>
-      <arco.Form.Item label="排序" field="app_groupOrder">
+      <arco.Form.Item label="排序" field="appGroupOrder">
         <arco.InputNumber placeholder="请输入顺序" />
       </arco.Form.Item>
     </arco.Form>
@@ -57,30 +57,30 @@ export const AppGroupInfoForm = () => {
         <arco.Input placeholder="" />
       </arco.Form.Item>
       <arco.Form.Item
-        label="上级组织编码"
-        field="app_groupParentCode"
+        label="上级分组编码"
+        field="appGroupParentCode"
         hidden={true}
       >
         <arco.Input placeholder="" />
       </arco.Form.Item>
       <arco.Form.Item
-        label="组织名称"
-        field="app_groupName"
-        rules={[{ required: true, message: "请输入组织名称" }]}
+        label="分组名称"
+        field="appGroupName"
+        rules={[{ required: true, message: "请输入分组名称" }]}
       >
-        <arco.Input placeholder="请输入组织名称" />
+        <arco.Input placeholder="请输入分组名称" />
       </arco.Form.Item>
       <arco.Form.Item
-        label="组织编码"
-        field="app_groupCode"
-        rules={[{ required: true, message: "请输入组织编码" }]}
+        label="分组编码"
+        field="appGroupCode"
+        rules={[{ required: true, message: "请输入分组编码" }]}
       >
-        <arco.Input placeholder="请输入组织编码" />
+        <arco.Input placeholder="请输入分组编码" />
       </arco.Form.Item>
-      <arco.Form.Item label="组织类型" field="app_groupType">
-        <arco.Input placeholder="请输入组织值" />
+      <arco.Form.Item label="分组类型" field="appGroupType">
+        <arco.Input placeholder="请输入分组值" />
       </arco.Form.Item>
-      <arco.Form.Item label="排序" field="app_groupOrder">
+      <arco.Form.Item label="排序" field="appGroupOrder">
         <arco.InputNumber placeholder="请输入顺序" />
       </arco.Form.Item>
     </arco.Form>
@@ -105,18 +105,18 @@ export const AppGroupParentForm = () => {
         <arco.Input placeholder="" />
       </arco.Form.Item>
       <arco.Form.Item
-        label="目标组织"
-        field="app_groupParentCode"
+        label="目标分组"
+        field="appGroupParentCode"
         hidden={false}
       >
         <arco.TreeSelect
           treeData={PageState.parentTreeData}
           fieldNames={{
-            key: "app_groupCode",
-            title: "app_groupName",
-            children: "app_groupChildren",
+            key: "appGroupCode",
+            title: "appGroupName",
+            children: "appGroupChildren",
           }}
-          placeholder="请选择目标组织"
+          placeholder="请选择目标分组"
         />
       </arco.Form.Item>
     </arco.Form>
