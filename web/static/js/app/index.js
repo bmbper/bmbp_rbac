@@ -1,5 +1,8 @@
 // web/tsx/app/index.tsx
 window.onload = () => {
   const root = ReactDOM.createRoot(document.getElementById("app"));
-  root.render(/* @__PURE__ */ React.createElement("div", null, "App"));
+  root.render(/* @__PURE__ */ React.createElement(AppView, null));
+};
+var AppView = () => {
+  return /* @__PURE__ */ React.createElement("div", null, "AppView");
 };

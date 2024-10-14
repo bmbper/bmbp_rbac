@@ -1,10 +1,12 @@
 use action::app::*;
+use action::app_group::*;
 use action::menu::*;
 use action::organ::*;
 use action::role::*;
 use action::user::*;
 use init::build_bmbp_static_router;
 use salvo::prelude::*;
+use view::app_group_view;
 use view::{app_view, menu_view, organ_view, role_view, user_view};
 mod action;
 mod ctx;
@@ -69,6 +71,25 @@ pub fn build_bmbp_rbac_router() -> Router {
                     .push(Router::with_path("remove").post(app_remove))
                     .push(Router::with_path("batch/remove").post(app_batch_remove))
                     .push(Router::with_path("index.view").get(app_view)),
+            )
+            .push(
+                Router::with_path("app/group")
+                    .push(Router::with_path("tree").post(app_group_find_tree))
+                    .push(Router::with_path("page").post(app_group_find_page))
+                    .push(Router::with_path("list").post(app_group_find_list))
+                    .push(Router::with_path("info").post(app_group_find_info))
+                    .push(Router::with_path("tree/ignore").post(app_group_find_tree_ignore))
+                    .push(Router::with_path("save").post(app_group_save))
+                    .push(Router::with_path("insert").post(app_group_insert))
+                    .push(Router::with_path("update").post(app_group_update))
+                    .push(Router::with_path("enable").post(app_group_enable))
+                    .push(Router::with_path("batch/enable").post(app_group_batch_enable))
+                    .push(Router::with_path("disable").post(app_group_disable))
+                    .push(Router::with_path("batch/disable").post(app_group_batch_disable))
+                    .push(Router::with_path("remove").post(app_group_remove))
+                    .push(Router::with_path("batch/remove").post(app_group_batch_remove))
+                    .push(Router::with_path("update/parent").post(app_group_update_parent))
+                    .push(Router::with_path("index.view").get(app_group_view)),
             )
             .push(
                 Router::with_path("menu")

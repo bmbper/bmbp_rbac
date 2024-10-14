@@ -16,4 +16,11 @@ pub struct BatchReqVo {
 pub struct BmbpRbacApp {
     app_code: Option<String>,
     app_name: Option<String>,
+    app_short_name: Option<String>,
+    app_icon: Option<String>,
+    app_version: Option<String>,
+    app_copyright: Option<String>,
+    app_desc: Option<String>,
+    app_status: Option<String>,
+    app_sort: Option<i32>,
 }
