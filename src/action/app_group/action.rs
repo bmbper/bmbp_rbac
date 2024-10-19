@@ -15,7 +15,7 @@ pub async fn app_group_find_tree(
 ) -> BmbpResp<RespVo<Vec<BmbpRbacAppGroup>>> {
     let params = req.parse_json::<BmbpRbacAppGroup>().await?;
     let data = BmbpRbacAppGroupService::app_group_find_tree(depot, &params).await?;
-    Ok(RespVo::ok_data_msg(data, "查询角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "查询成功!".to_string()))
 }
 
 #[handler]
@@ -27,7 +27,7 @@ pub async fn app_group_find_page(
     let params = req.parse_json::<BmbpPageReq<BmbpRbacAppGroup>>().await?;
     tracing::debug!("page params:{:#?}", params);
     let data = BmbpRbacAppGroupService::app_group_find_page(depot, &params).await?;
-    Ok(RespVo::ok_data_msg(data, "查询角色分页成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "查询成功!".to_string()))
 }
 
 #[handler]
@@ -38,7 +38,7 @@ pub async fn app_group_find_list(
 ) -> BmbpResp<RespVo<Vec<BmbpRbacAppGroup>>> {
     let params = req.parse_json::<BmbpRbacAppGroup>().await?;
     let data = BmbpRbacAppGroupService::app_group_find_list(depot, &params).await?;
-    Ok(RespVo::ok_data_msg(data, "查询角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "查询成功!".to_string()))
 }
 
 #[handler]
@@ -49,7 +49,7 @@ pub async fn app_group_find_tree_ignore(
 ) -> BmbpResp<RespVo<Vec<BmbpRbacAppGroup>>> {
     let params = req.parse_json::<BmbpRbacAppGroup>().await?;
     let data = BmbpRbacAppGroupService::app_group_find_tree_ignore(depot, &params).await?;
-    Ok(RespVo::ok_data_msg(data, "查询角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "查询成功!".to_string()))
 }
 
 #[handler]
@@ -60,7 +60,7 @@ pub async fn app_group_find_info(
 ) -> BmbpResp<RespVo<BmbpRbacAppGroup>> {
     let app_group_id = req.query::<String>("dataId");
     let data = BmbpRbacAppGroupService::app_group_find_info(depot, app_group_id.as_ref()).await?;
-    Ok(RespVo::ok_data_msg(data, "查询角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "查询详情成功!".to_string()))
 }
 
 #[handler]
@@ -71,7 +71,7 @@ pub async fn app_group_save(
 ) -> BmbpResp<RespVo<BmbpRbacAppGroup>> {
     let mut params = req.parse_json::<BmbpRbacAppGroup>().await?;
     let data = BmbpRbacAppGroupService::app_group_save(depot, &mut params).await?;
-    Ok(RespVo::ok_data_msg(data, "保存角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "保存成功!".to_string()))
 }
 
 #[handler]
@@ -82,7 +82,7 @@ pub async fn app_group_insert(
 ) -> BmbpResp<RespVo<BmbpRbacAppGroup>> {
     let mut params = req.parse_json::<BmbpRbacAppGroup>().await?;
     let data = BmbpRbacAppGroupService::app_group_insert(depot, &mut params).await?;
-    Ok(RespVo::ok_data_msg(data, "新增角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "新增成功!".to_string()))
 }
 
 #[handler]
@@ -93,7 +93,7 @@ pub async fn app_group_update(
 ) -> BmbpResp<RespVo<BmbpRbacAppGroup>> {
     let mut params = req.parse_json::<BmbpRbacAppGroup>().await?;
     let data = BmbpRbacAppGroupService::app_group_update(depot, &mut params).await?;
-    Ok(RespVo::ok_data_msg(data, "更新角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "更新成功!".to_string()))
 }
 
 #[handler]
@@ -104,7 +104,7 @@ pub async fn app_group_enable(
 ) -> BmbpResp<RespVo<u64>> {
     let app_group_id = req.query::<String>("dataId");
     let data = BmbpRbacAppGroupService::app_group_enable(depot, app_group_id.as_ref()).await?;
-    Ok(RespVo::ok_data_msg(data, "启用角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "启用成功!".to_string()))
 }
 
 #[handler]
@@ -115,7 +115,7 @@ pub async fn app_group_disable(
 ) -> BmbpResp<RespVo<u64>> {
     let app_group_id = req.query::<String>("dataId");
     let data = BmbpRbacAppGroupService::app_group_disable(depot, app_group_id.as_ref()).await?;
-    Ok(RespVo::ok_data_msg(data, "停用角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "停用成功!".to_string()))
 }
 
 #[handler]
@@ -126,7 +126,7 @@ pub async fn app_group_batch_enable(
 ) -> BmbpResp<RespVo<u64>> {
     let app_group_req = req.parse_json::<BatchReqVo>().await?;
     let data = BmbpRbacAppGroupService::app_group_batch_enable(depot, &app_group_req).await?;
-    Ok(RespVo::ok_data_msg(data, "启用角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "批量启用成功!".to_string()))
 }
 
 #[handler]
@@ -137,7 +137,7 @@ pub async fn app_group_batch_disable(
 ) -> BmbpResp<RespVo<u64>> {
     let app_group_req = req.parse_json::<BatchReqVo>().await?;
     let data = BmbpRbacAppGroupService::app_group_batch_disable(depot, &app_group_req).await?;
-    Ok(RespVo::ok_data_msg(data, "停用角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "批量停用成功!".to_string()))
 }
 
 #[handler]
@@ -148,7 +148,7 @@ pub async fn app_group_remove(
 ) -> BmbpResp<RespVo<u64>> {
     let app_group_id = req.query::<String>("dataId");
     let data = BmbpRbacAppGroupService::app_group_remove(depot, app_group_id.as_ref()).await?;
-    Ok(RespVo::ok_data_msg(data, "删除角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "删除成功!".to_string()))
 }
 
 #[handler]
@@ -159,7 +159,7 @@ pub async fn app_group_batch_remove(
 ) -> BmbpResp<RespVo<u64>> {
     let app_group_req = req.parse_json::<BatchReqVo>().await?;
     let data = BmbpRbacAppGroupService::app_group_batch_remove(depot, &app_group_req).await?;
-    Ok(RespVo::ok_data_msg(data, "删除角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "批量删除成功!".to_string()))
 }
 
 #[handler]
@@ -170,5 +170,5 @@ pub async fn app_group_update_parent(
 ) -> BmbpResp<RespVo<u64>> {
     let mut params = req.parse_json::<BmbpRbacAppGroup>().await?;
     let data = BmbpRbacAppGroupService::app_group_update_parent(depot, &mut params).await?;
-    Ok(RespVo::ok_data_msg(data, "更新上级角色成功!".to_string()))
+    Ok(RespVo::ok_data_msg(data, "变更上级成功!".to_string()))
 }

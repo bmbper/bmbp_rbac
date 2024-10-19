@@ -14,11 +14,10 @@ use bmbp_rdbc::UpdateWrapper;
 use bmbp_util::{current_time, BmbpId, BmbpTreeUtil, BMBP_TREE_ROOT_NODE};
 use salvo::Depot;
 
-use bmbp_curd::{BmbpCurdDao, BmbpCurdService};
-
 use super::bean::BatchReqVo;
 use super::bean::BmbpRbacAppGroup;
 use super::bean::BmbpRbacAppGroupColumn;
+use bmbp_curd::{BmbpCurdDao, BmbpCurdService};
 
 pub struct BmbpRbacAppGroupService;
 
@@ -216,13 +215,11 @@ impl BmbpRbacAppGroupService {
         } else {
             params.set_app_group_code_path(Some(format!(
                 "{}/{}/",
-                params.get_app_group_parent_code().as_ref().unwrap(),
-                app_group_code
+                BMBP_TREE_ROOT_NODE, app_group_code
             )));
             params.set_app_group_name_path(Some(format!(
                 "{}/{}/",
-                params.get_app_group_parent_code().as_ref().unwrap(),
-                app_group_name
+                BMBP_TREE_ROOT_NODE, app_group_name
             )));
         }
         // tree_grade;
@@ -276,6 +273,10 @@ impl BmbpRbacAppGroupService {
         insert_wrapper.insert_column_value(
             BmbpRbacAppGroupColumn::AppGroupTreeGrade.get_ident(),
             params.get_app_group_tree_grade().unwrap_or(1),
+        );
+        insert_wrapper.insert_column_value(
+            BmbpRbacAppGroupColumn::AppGroupDesc.get_ident(),
+            params.get_app_group_desc().as_ref(),
         );
 
         insert_wrapper.insert_column_value(
@@ -381,6 +382,9 @@ impl BmbpRbacAppGroupService {
         if params.get_data_sort().is_none() {
             params.set_data_sort(app_group_info.get_data_sort().clone());
         }
+        if params.get_app_group_desc().is_none() {
+            params.set_app_group_desc(app_group_info.get_app_group_desc().clone());
+        }
         if params.get_app_group_order().is_none() {
             params.set_app_group_order(app_group_info.get_app_group_order().clone());
         }
@@ -473,8 +477,15 @@ impl BmbpRbacAppGroupService {
             params.get_app_group_tree_grade().unwrap(),
         );
         update_wrapper.set(
+            BmbpRbacAppGroupColumn::AppGroupDesc,
+            params
+                .get_app_group_desc()
+                .as_ref()
+                .unwrap_or(&"".to_string()),
+        );
+        update_wrapper.set(
             BmbpRbacAppGroupColumn::DataSort,
-            params.get_data_sort().unwrap(),
+            params.get_data_sort().unwrap_or(0),
         );
         update_wrapper.set(BmbpRbacAppGroupColumn::DataUpdateTime, current_time());
         update_wrapper.set(BmbpRbacAppGroupColumn::DataUpdateUser, "");
@@ -538,7 +549,7 @@ impl BmbpRbacAppGroupService {
         params: &BatchReqVo,
     ) -> BmbpResp<Option<u64>> {
         let mut u64 = 0;
-        if let Some(ids) = params.get_ids() {
+        if let Some(ids) = params.get_data_id_list() {
             for id in ids {
                 let resp = Self::app_group_enable(depot, Some(id)).await?;
                 if resp.is_some() {
@@ -581,7 +592,7 @@ impl BmbpRbacAppGroupService {
         params: &BatchReqVo,
     ) -> BmbpResp<Option<u64>> {
         let mut u64 = 0;
-        if let Some(ids) = params.get_ids() {
+        if let Some(ids) = params.get_data_id_list() {
             for id in ids {
                 let resp = Self::app_group_disable(depot, Some(id)).await?;
                 if resp.is_some() {
@@ -606,6 +617,21 @@ impl BmbpRbacAppGroupService {
                 Some("未找到应用分组信息".to_string()),
             ));
         }
+
+        let group_status = app_group_info
+            .as_ref()
+            .unwrap()
+            .get_data_status()
+            .as_ref()
+            .unwrap_or(&"".to_string())
+            .clone();
+        if group_status == "1" {
+            return Err(BmbpRespErr::err(
+                Some("SERVICE".to_string()),
+                Some("已启用状态的分组不能删除！".to_string()),
+            ));
+        }
+
         let code_path = app_group_info
             .as_ref()
             .unwrap()
@@ -624,16 +650,56 @@ impl BmbpRbacAppGroupService {
         depot: &mut Depot,
         params: &BatchReqVo,
     ) -> BmbpResp<Option<u64>> {
-        let data_ids = params.get_ids().clone().unwrap_or(vec![]);
-        let mut res = 0u64;
-        for id in data_ids {
-            let resp = Self::app_group_remove(depot, Some(&id)).await?;
-            if resp.is_some() {
-                res += resp.unwrap();
+        let data_ids = params.get_data_id_list().clone().unwrap_or(vec![]);
+        let orm = parse_orm(depot)?;
+        if data_ids.is_empty() {
+            return Ok(Some(0));
+        }
+        let group_vec = Self::app_group_find_list_by_ids(orm, &data_ids).await?;
+        if group_vec.is_none() || group_vec.as_ref().unwrap().is_empty() {
+            return Err(BmbpRespErr::err(
+                Some("SERVICE".to_string()),
+                Some("未找到应用分组信息".to_string()),
+            ));
+        }
+
+        for group in group_vec.as_ref().unwrap() {
+            let group_status = group
+                .get_data_status()
+                .as_ref()
+                .unwrap_or(&"".to_string())
+                .clone();
+            if group_status == "1" {
+                return Err(BmbpRespErr::err(
+                    Some("SERVICE".to_string()),
+                    Some("已启用状态的分组不能删除！".to_string()),
+                ));
             }
         }
-        Ok(Some(res))
+
+        let mut row_count = 0u64;
+        for group in group_vec.as_ref().unwrap() {
+            let code_path = group.get_app_group_code_path().as_ref().unwrap().clone();
+            let mut delete_wrapper = DeleteWrapper::new();
+            delete_wrapper.table(BmbpRbacAppGroup::get_table());
+            delete_wrapper.like_left_(BmbpRbacAppGroupColumn::AppGroupCodePath, code_path);
+            let res = BmbpCurdDao::execute_delete::<BmbpRbacAppGroup>(orm, &delete_wrapper).await?;
+            if res.is_some() {
+                row_count += res.unwrap();
+            }
+        }
+        Ok(Some(row_count))
     }
+
+    async fn app_group_find_list_by_ids(
+        orm: &RdbcOrm,
+        data_ids: &Vec<String>,
+    ) -> BmbpResp<Option<Vec<BmbpRbacAppGroup>>> {
+        let mut query_wrapper = QueryWrapper::new_from::<BmbpRbacAppGroup>();
+        query_wrapper.in_v(BmbpRbacAppGroupColumn::DataId, data_ids.clone());
+        BmbpCurdDao::execute_query_list::<BmbpRbacAppGroup>(orm, &query_wrapper).await
+    }
+
     pub(crate) async fn app_group_update_parent(
         depot: &mut Depot,
         params: &mut BmbpRbacAppGroup,
@@ -658,29 +724,16 @@ impl BmbpRbacAppGroupService {
     }
 
     async fn build_app_group_query_wrapper(
-        depot: &mut Depot,
+        _: &mut Depot,
         params_op: Option<&BmbpRbacAppGroup>,
     ) -> BmbpResp<QueryWrapper> {
         let mut query_wrapper = QueryWrapper::new_from::<BmbpRbacAppGroup>();
         if let Some(params) = params_op {
             if let Some(app_group_id) = params.get_data_id() {
-                let app_group = Self::app_group_find_info(depot, Some(app_group_id)).await?;
-                if app_group.is_none() {
-                    return Err(BmbpRespErr::err(
-                        Some("DB".to_string()),
-                        Some("未找到应用分组信息".to_string()),
-                    ));
-                }
-                query_wrapper.like_left_(
-                    BmbpRbacAppGroupColumn::AppGroupCodePath,
-                    app_group_id.clone(),
-                );
+                query_wrapper.eq_(BmbpRbacAppGroupColumn::DataId, app_group_id.clone());
             }
             if let Some(app_group_code) = params.get_app_group_code() {
-                query_wrapper.like_left_(
-                    BmbpRbacAppGroupColumn::AppGroupCodePath,
-                    app_group_code.clone(),
-                );
+                query_wrapper.like_(BmbpRbacAppGroupColumn::AppGroupCode, app_group_code.clone());
             }
             if let Some(app_group_parent_code) = params.get_app_group_parent_code() {
                 query_wrapper.like_(
@@ -688,7 +741,6 @@ impl BmbpRbacAppGroupService {
                     app_group_parent_code.clone(),
                 );
             }
-
             if let Some(app_group_name) = params.get_app_group_name() {
                 query_wrapper.like_(BmbpRbacAppGroupColumn::AppGroupName, app_group_name.clone());
             }
@@ -698,7 +750,7 @@ impl BmbpRbacAppGroupService {
         }
         query_wrapper.order_by(BmbpRbacAppGroupColumn::AppGroupTreeGrade, true);
         query_wrapper.order_by(BmbpRbacAppGroupColumn::AppGroupParentCode, true);
-        query_wrapper.order_by(BmbpRbacAppGroupColumn::DataSort, true);
+        query_wrapper.order_by(BmbpRbacAppGroupColumn::AppGroupOrder, true);
         query_wrapper.order_by(BmbpRbacAppGroupColumn::DataCreateTime, true);
         Ok(query_wrapper)
     }

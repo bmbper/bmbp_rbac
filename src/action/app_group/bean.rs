@@ -9,9 +9,11 @@ use serde::Serialize;
 
 #[bean]
 pub struct BatchReqVo {
-    ids: Option<Vec<String>>,
+    data_id_list: Option<Vec<String>>,
 }
 
 // 角色信息
 #[table_rdbc_tree_bean_orm_option(BMBP_RBAC_APP_GROUP, app_group)]
-pub struct BmbpRbacAppGroup {}
+pub struct BmbpRbacAppGroup {
+    app_group_desc: Option<String>,
+}
