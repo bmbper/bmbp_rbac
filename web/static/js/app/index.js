@@ -1,8 +1,7 @@
 // web/tsx/app/action.tsx
 var PageState = {};
 var PageUrl = {
-  findTreeUrl: "./tree",
-  findIgnoreTreeUrl: "./tree/ignore",
+  findGroupTreeUrl: "./group/tree",
   findPageUrl: "./page",
   saveUrl: "./save",
   findInfoUrl: "./info",
@@ -66,10 +65,7 @@ var PageAction = {
     const [parentTreeData, setParentTreeData] = React.useState([]);
     PageState.parentTreeData = parentTreeData;
     PageState.setParentTreeData = setParentTreeData;
-    const [
-      changeShowOrderFormDialogVisible,
-      setChangeShowOrderFormDialogVisible
-    ] = React.useState(false);
+    const [changeShowOrderFormDialogVisible, setChangeShowOrderFormDialogVisible] = React.useState(false);
     PageState.changeShowOrderFormDialogVisible = changeShowOrderFormDialogVisible;
     PageState.setChangeShowOrderFormDialogVisible = setChangeShowOrderFormDialogVisible;
     const [importFormDialogVisible, setImportFormDialogVisible] = React.useState(false);
@@ -91,25 +87,11 @@ var PageAction = {
       PageState.setSelectTreeNodeKeys([]);
       PageState.setSelectTreeNodeData({});
     }
-    axios.post(PageUrl.findTreeUrl, { appGroupName: v }).then((resp) => {
+    axios.post(PageUrl.findGroupTreeUrl, { appGroupName: v, dataStatus: "1" }).then((resp) => {
       const { code, msg, data } = resp;
       if (code == 0) {
         PageState.setTreeData(data);
         PageAction.findGridData();
-      } else {
-        console.log("error:", resp);
-        arco.Message.error(resp.msg);
-      }
-    }).catch((err) => {
-      console.log("error:", err);
-      arco.Message.error("\u7CFB\u7EDF\u597D\u50CF\u662F\u8D70\u4E22\u4E86\uFF0C\u8BF7\u8054\u7CFB\u7BA1\u7406\u5458");
-    });
-  },
-  findTreeDataIgnoreDataId: (dataId) => {
-    axios.post(PageUrl.findIgnoreTreeUrl, { dataId }).then((resp) => {
-      const { code, msg, data } = resp;
-      if (code == 0) {
-        PageState.setParentTreeData(data);
       } else {
         console.log("error:", resp);
         arco.Message.error(resp.msg);
@@ -454,127 +436,7 @@ var ExportAppGroupFormDialog = () => {
   }));
 };
 
-// web/tsx/app/index.tsx
-window.onload = () => {
-  const root = ReactDOM.createRoot(document.getElementById("app"));
-  root.render(/* @__PURE__ */ React.createElement(PageView, null));
-};
-var PageView = (props) => {
-  PageAction.init(props);
-  React.useEffect(() => {
-    PageAction.findTreeData(null);
-  }, []);
-  React.useEffect(() => {
-    PageAction.findGridData();
-  }, [
-    PageState.pageData.pageNo,
-    PageState.pageData.pageSize,
-    PageState.selectTreeNodeData,
-    PageState.searchFormData
-  ]);
-  return /* @__PURE__ */ React.createElement("div", {
-    className: "bmbp-app-fluid"
-  }, /* @__PURE__ */ React.createElement(arco.Grid.Row, {
-    guides: [1, 1],
-    style: { height: "100vh" }
-  }, /* @__PURE__ */ React.createElement(arco.Grid.Col, {
-    flex: "260px"
-  }, /* @__PURE__ */ React.createElement(PageTreeView, null)), /* @__PURE__ */ React.createElement(arco.Divider, {
-    type: "vertical",
-    style: { height: "100%" }
-  }), /* @__PURE__ */ React.createElement(arco.Grid.Col, {
-    flex: "auto",
-    style: { height: "100%", width: "600px" }
-  }, /* @__PURE__ */ React.createElement(PageGridView, null))), /* @__PURE__ */ React.createElement(AddAppGroupFormDialog, null), /* @__PURE__ */ React.createElement(EditAppGroupFormDialog, null), /* @__PURE__ */ React.createElement(InfoAppGroupFormDialog, null), /* @__PURE__ */ React.createElement(ChangeParentAppGroupFormDialog, null), /* @__PURE__ */ React.createElement(ImportAppGroupFormDialog, null), /* @__PURE__ */ React.createElement(ExportAppGroupFormDialog, null));
-};
-var PageTreeView = () => {
-  const TreeNodExtraAction = (props) => {
-    const data = props.dataRef;
-    debugger;
-    return /* @__PURE__ */ React.createElement(arco.Menu, {
-      style: {
-        width: "100px",
-        background: "#fff",
-        border: "1px solid #e8e8e8"
-      }
-    }, /* @__PURE__ */ React.createElement(arco.Menu.Item, {
-      key: "addBrother",
-      onClick: () => {
-        PageAction.addBrotherNode(data);
-      }
-    }, "\u65B0\u589E\u540C\u7EA7"), /* @__PURE__ */ React.createElement(arco.Menu.Item, {
-      key: "addChild",
-      onClick: () => {
-        PageAction.addChildNode(data);
-      }
-    }, "\u65B0\u589E\u5B50\u7EA7"), data.dataStatus === "0" ? /* @__PURE__ */ React.createElement(arco.Menu.Item, {
-      key: "edit",
-      onClick: () => {
-        PageAction.editNode(data);
-      }
-    }, "\u7F16\u8F91", " ") : null, data.dataStatus === "0" ? /* @__PURE__ */ React.createElement(arco.Menu.Item, {
-      key: "remove",
-      onClick: () => {
-        PageAction.removeNode(data);
-      }
-    }, " ", "\u5220\u9664", " ") : null, data.dataStatus === "0" ? /* @__PURE__ */ React.createElement(arco.Menu.Item, {
-      key: "enable",
-      onClick: () => {
-        PageAction.enableNode(data);
-      }
-    }, "\u542F\u7528") : null, data.dataStatus === "1" ? /* @__PURE__ */ React.createElement(arco.Menu.Item, {
-      key: "disable",
-      onClick: () => {
-        PageAction.disableNode(data);
-      }
-    }, "\u505C\u7528") : null, /* @__PURE__ */ React.createElement(arco.Menu.Item, {
-      key: "changeParent",
-      onClick: () => {
-        PageAction.changeParentNode(data);
-      }
-    }, "\u53D8\u66F4\u7236\u7EA7"));
-  };
-  const renderTreeNodExtra = (node) => {
-    return /* @__PURE__ */ React.createElement(arco.Dropdown, {
-      droplist: /* @__PURE__ */ React.createElement(TreeNodExtraAction, {
-        dataRef: node.dataRef
-      }),
-      position: "bl"
-    }, /* @__PURE__ */ React.createElement(arcoicon.IconMore, {
-      style: {
-        position: "absolute",
-        right: 8,
-        fontSize: 12,
-        top: 10,
-        color: "#3370ff"
-      }
-    }));
-  };
-  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", {
-    style: { display: "block" }
-  }, /* @__PURE__ */ React.createElement(arco.Input.Search, {
-    searchButton: true,
-    placeholder: "\u8BF7\u8F93\u5165",
-    onSearch: (v) => {
-      PageAction.findTreeData(v);
-    }
-  })), /* @__PURE__ */ React.createElement(arco.Tree, {
-    treeData: PageState.treeData,
-    blockNode: true,
-    renderExtra: renderTreeNodExtra,
-    onSelect: (keys, extra) => {
-      PageState.setSelectTreeNodeKeys(keys);
-      PageState.setSelectTreeNodeData(extra.node.props.dataRef);
-    },
-    showLine: true,
-    selectedKeys: PageState.selectTreeNodeKeys,
-    fieldNames: {
-      key: "appGroupCode",
-      title: "appGroupName",
-      children: "appGroupChildren"
-    }
-  }));
-};
+// web/tsx/app/grid.tsx
 var PageGridView = () => {
   return /* @__PURE__ */ React.createElement("div", {
     className: "bmbp-grid-container"
@@ -850,4 +712,60 @@ var PageGridPage = () => {
       });
     }
   }));
+};
+
+// web/tsx/app/group_tree.tsx
+var PageTreeView = () => {
+  return /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", {
+    style: { display: "block" }
+  }, /* @__PURE__ */ React.createElement(arco.Input.Search, {
+    searchButton: true,
+    placeholder: "\u8BF7\u8F93\u5165",
+    onSearch: (v) => {
+      PageAction.findTreeData(v);
+    }
+  })), /* @__PURE__ */ React.createElement(arco.Tree, {
+    treeData: PageState.treeData,
+    blockNode: true,
+    onSelect: (keys, extra) => {
+      PageState.setSelectTreeNodeKeys(keys);
+      PageState.setSelectTreeNodeData(extra.node.props.dataRef);
+    },
+    showLine: true,
+    selectedKeys: PageState.selectTreeNodeKeys,
+    fieldNames: {
+      key: "appGroupCode",
+      title: "appGroupName",
+      children: "appGroupChildren"
+    }
+  }));
+};
+
+// web/tsx/app/index.tsx
+window.onload = () => {
+  const root = ReactDOM.createRoot(document.getElementById("app"));
+  root.render(/* @__PURE__ */ React.createElement(PageView, null));
+};
+var PageView = (props) => {
+  PageAction.init(props);
+  React.useEffect(() => {
+    PageAction.findTreeData(null);
+  }, []);
+  React.useEffect(() => {
+    PageAction.findGridData();
+  }, [PageState.pageData.pageNo, PageState.pageData.pageSize, PageState.selectTreeNodeData, PageState.searchFormData]);
+  return /* @__PURE__ */ React.createElement("div", {
+    className: "bmbp-app-fluid"
+  }, /* @__PURE__ */ React.createElement(arco.Grid.Row, {
+    guides: [1, 1],
+    style: { height: "100vh" }
+  }, /* @__PURE__ */ React.createElement(arco.Grid.Col, {
+    flex: "260px"
+  }, /* @__PURE__ */ React.createElement(PageTreeView, null)), /* @__PURE__ */ React.createElement(arco.Divider, {
+    type: "vertical",
+    style: { height: "100%" }
+  }), /* @__PURE__ */ React.createElement(arco.Grid.Col, {
+    flex: "auto",
+    style: { height: "100%", width: "600px" }
+  }, /* @__PURE__ */ React.createElement(PageGridView, null))), /* @__PURE__ */ React.createElement(AddAppGroupFormDialog, null), /* @__PURE__ */ React.createElement(EditAppGroupFormDialog, null), /* @__PURE__ */ React.createElement(InfoAppGroupFormDialog, null), /* @__PURE__ */ React.createElement(ChangeParentAppGroupFormDialog, null), /* @__PURE__ */ React.createElement(ImportAppGroupFormDialog, null), /* @__PURE__ */ React.createElement(ExportAppGroupFormDialog, null));
 };
