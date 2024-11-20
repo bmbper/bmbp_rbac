@@ -28,7 +28,7 @@ bmbp_rdbc = "0.2.8"
 bmbp_curd = "0.0.1"
 
 rust-embed = "8.5.0"
-salvo = { version = "0.71.1", features = [
+salvo = { version = "0.74.2", features = [
     "default",
     "serve-static",
     "cors",
