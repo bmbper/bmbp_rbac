@@ -92,7 +92,7 @@ pub fn build_router() -> Router {
                                 )
                                 .push(
                                     Router::with_path("tree/exclude.action")
-                                        .post(app::action::query_tree_with_out),
+                                        .post(app::action::query_tree_exclude_node),
                                 )
                                 .push(
                                     Router::with_path("page.action").post(app::action::query_page),
