@@ -1,15 +1,23 @@
 use crate::app_group::bean::BmbpAppGroup;
-use bmbp_abc::{base_ctx, BmbpTreeModel, BmbpTreeUtil};
-use bmbp_util::BmbpId;
+use crate::app_group::service::Service;
+use bmbp_bean::{RespVo, VecRespVo};
 use salvo::prelude::*;
 
 #[handler]
 pub async fn query_tree(req: &mut Request, resp: &mut Response, depot: &mut Depot) {
-    let mut group = BmbpAppGroup::default();
-    group.tree_mut().node_code = BmbpId::simple_uuid();
-    let group_vec = vec![group];
-    let group_v = BmbpTreeUtil::build_tree(group_vec);
-    resp.render(Json(group_v));
+    let mut group_query = req
+        .parse_json::<BmbpAppGroup>()
+        .await
+        .unwrap_or(BmbpAppGroup::default());
+    let group_tree = Service::query_tree(&mut group_query).await;
+    match group_tree {
+        Ok(data) => {
+            resp.render(Json(VecRespVo::ok_msg(data, "查询成功!")));
+        }
+        Err(e) => {
+            resp.render(Json(RespVo::err_msg(e.to_string())));
+        }
+    }
 }
 
 #[handler]

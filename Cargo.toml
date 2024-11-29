@@ -14,10 +14,11 @@ bmbp_bean = { workspace = true }
 bmbp_vars = { workspace = true }
 bmbp_util = { workspace = true }
 bmbp_abc = { workspace = true }
+bmbp_sql = { workspace = true }
+bmbp_app_orm = { workspace = true }
 salvo = { workspace = true }
 tera = { workspace = true }
 rust-embed = "8.5.0"
-
 chrono = "0.4.38"
 serde = { version = "1.0.215", features = ["derive"] }
 serde_json = { version = "1.0.132", features = ["default"] }
