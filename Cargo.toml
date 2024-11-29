@@ -12,6 +12,7 @@ documentation = "https://github.com/bmbper/bmbp_rbac"
 [dependencies]
 bmbp_bean = { workspace = true }
 bmbp_vars = { workspace = true }
+bmbp_util = { workspace = true }
 bmbp_abc = { workspace = true }
 salvo = { workspace = true }
 tera = { workspace = true }

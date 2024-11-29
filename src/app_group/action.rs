@@ -1,10 +1,12 @@
 use crate::app_group::bean::BmbpAppGroup;
-use bmbp_abc::{base_ctx, BmbpTreeUtil};
+use bmbp_abc::{base_ctx, BmbpTreeModel, BmbpTreeUtil};
+use bmbp_util::BmbpId;
 use salvo::prelude::*;
 
 #[handler]
 pub async fn query_tree(req: &mut Request, resp: &mut Response, depot: &mut Depot) {
-    let group = BmbpAppGroup::default();
+    let mut group = BmbpAppGroup::default();
+    group.tree_mut().node_code = BmbpId::simple_uuid();
     let group_vec = vec![group];
     let group_v = BmbpTreeUtil::build_tree(group_vec);
     resp.render(Json(group_v));
