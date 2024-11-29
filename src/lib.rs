@@ -1,3 +1,4 @@
+mod app_group;
 mod view;
 
 use bmbp_abc::tera_add_template;
