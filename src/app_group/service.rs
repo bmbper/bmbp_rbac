@@ -1,7 +1,7 @@
 use crate::app_group::bean::{BmbpAppGroup, BmbpAppGroupColumn, BmbpAppGroupTable};
 use bmbp_abc::BmbpTreeUtil;
 use bmbp_app_orm::BMBP_APP_ORM;
-use bmbp_bean::BmbpResp;
+use bmbp_bean::{BmbpError, BmbpResp};
 use bmbp_sql::RdbcQueryWrapper;
 
 pub struct Service;
@@ -17,8 +17,9 @@ impl Service {
             &group.group.node_name,
             group.group.node_name.is_empty(),
         );
-        let mut group_vec = BMBP_APP_ORM.read()?.find_list_by_query(&query)?;
-        group_vec = BmbpTreeUtil::build_tree(group_vec);
-        Ok(group_vec)
+        match BMBP_APP_ORM.read()?.find_list_by_query(&query) {
+            Ok(group_vec) => Ok(group_vec),
+            Err(err) => Err(BmbpError::new(err.kind, "3001".to_string(), err.msg)),
+        }
     }
 }
