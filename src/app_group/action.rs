@@ -12,10 +12,15 @@ pub async fn query_tree(req: &mut Request, resp: &mut Response, depot: &mut Depo
     let group_tree = Service::query_tree(&mut group_query).await;
     match group_tree {
         Ok(data) => {
-            resp.render(Json(VecRespVo::ok_msg(data, "查询成功!")));
+            resp.render(Json(VecRespVo::<BmbpAppGroup>::ok_msg::<&str>(
+                data,
+                "查询成功!",
+            )));
         }
         Err(e) => {
-            resp.render(Json(RespVo::err_msg(e.to_string())));
+            resp.render(Json(VecRespVo::<BmbpAppGroup>::err_msg::<String>(
+                e.to_string(),
+            )));
         }
     }
 }
