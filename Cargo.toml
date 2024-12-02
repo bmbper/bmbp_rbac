@@ -15,8 +15,8 @@ bmbp_vars = { workspace = true }
 bmbp_util = { workspace = true }
 bmbp_abc = { workspace = true }
 bmbp_sql = { workspace = true }
-bmbp_app_orm = { workspace = true }
-bmbp_marco_table = { workspace = true }
+bmbp_orm = { workspace = true }
+bmbp_abc_marco = { workspace = true }
 salvo = { workspace = true }
 tera = { workspace = true }
 rust-embed = "8.5.0"

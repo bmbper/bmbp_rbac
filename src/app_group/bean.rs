@@ -1,5 +1,5 @@
 use bmbp_abc::{BmbpTree, BmbpTreeModel};
-use bmbp_marco_table::table;
+use bmbp_abc_marco::table;
 use serde::{Deserialize, Serialize};
 
 #[table(name = "BMBP_RBAC_APP_GROUP")]
