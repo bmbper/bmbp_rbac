@@ -1,5 +1,4 @@
 use crate::app_group::bean::{BmbpAppGroup, BmbpAppGroupColumn, BmbpAppGroupTable};
-use bmbp_abc::BmbpTreeUtil;
 use bmbp_bean::{BmbpError, BmbpResp};
 use bmbp_orm::BMBP_ORM;
 use bmbp_sql::RdbcQueryWrapper;
