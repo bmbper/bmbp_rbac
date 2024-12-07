@@ -8,6 +8,7 @@ use serde::{Deserialize, Serialize};
 pub struct BmbpAppGroup {
     #[serde(flatten)]
     pub group: BmbpTree<BmbpAppGroup>,
+    pub group_tag: String,
 }
 
 impl BmbpTreeModel<BmbpAppGroup> for BmbpAppGroup {
