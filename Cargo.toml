@@ -10,14 +10,16 @@ homepage = "https://github.com/bmbper/bmbp_rbac"
 repository = "https://github.com/bmbper/bmbp_rbac"
 documentation = "https://github.com/bmbper/bmbp_rbac"
 [dependencies]
+bmbp_rdbc_type = { workspace = true }
+bmbp_marco_rdbc = { workspace = true }
 bmbp_bean = { workspace = true }
 bmbp_vars = { workspace = true }
 bmbp_util = { workspace = true }
 bmbp_abc = { workspace = true }
 bmbp_sql = { workspace = true }
 bmbp_orm = { workspace = true }
-bmbp_abc_marco = { workspace = true }
 salvo = { workspace = true }
+
 tera = { workspace = true }
 rust-embed = "8.5.0"
 chrono = "0.4.38"

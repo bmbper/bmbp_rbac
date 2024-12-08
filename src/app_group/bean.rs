@@ -1,21 +1,9 @@
-use bmbp_abc::{BmbpTree, BmbpTreeModel};
-use bmbp_abc_marco::table;
+use bmbp_marco_rdbc::table_rdbc_tree_bean;
+use bmbp_rdbc_type::RdbcIdent;
+use bmbp_rdbc_type::RdbcTableIdent;
+use bmbp_util::BmbpTree;
 use serde::{Deserialize, Serialize};
-
-#[table(name = "BMBP_RBAC_APP_GROUP")]
+#[table_rdbc_tree_bean(table = BMBP_RBAC_APP_GROUP,tree=app_group)]
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 #[serde(default)]
-pub struct BmbpAppGroup {
-    #[serde(flatten)]
-    pub group: BmbpTree<BmbpAppGroup>,
-    pub group_tag: String,
-}
-
-impl BmbpTreeModel<BmbpAppGroup> for BmbpAppGroup {
-    fn tree_mut(&mut self) -> &mut BmbpTree<BmbpAppGroup> {
-        &mut self.group
-    }
-    fn tree(&self) -> &BmbpTree<BmbpAppGroup> {
-        &self.group
-    }
-}
+pub struct BmbpAppGroup {}
