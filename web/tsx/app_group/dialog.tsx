@@ -1,5 +1,5 @@
 import {PageAction, PageState} from "./action";
-import {AddForm, EditForm, InfoForm, OwnerForm} from "./form";
+import {AddForm, EditForm, DetailForm, OwnerForm} from "./form";
 
 export const AddFormDialog = () => {
     return (
@@ -55,7 +55,7 @@ export const EditFormDialog = () => {
             </arco.Modal>
         </>);
 }
-export const InfoFormDialog = () => {
+export const DetailFormDialog = () => {
     return (
         <>
             <arco.Modal
@@ -69,7 +69,7 @@ export const InfoFormDialog = () => {
                     PageState.setDetailFormVisible(false)
                 }}
             >
-                <InfoForm/>
+                <DetailForm/>
             </arco.Modal>
         </>);
 }

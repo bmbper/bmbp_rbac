@@ -1,5 +1,5 @@
 import {PageAction, PageState} from "./action";
-import {AddFormDialog, EditFormDialog, InfoFormDialog, OwnerFormDialog} from "./dialog";
+import {AddFormDialog, EditFormDialog, DetailFormDialog, OwnerFormDialog} from "./dialog";
 
 window.onload = () => {
     const root = ReactDOM.createRoot(document.getElementById("app"));
@@ -21,63 +21,13 @@ const PageView = () => {
 }
 
 const TreeGridPageView = (props: any) => {
-    React.useEffect(() => {
-        const treeData = [
-            {
-                title: 'Trunk 0-0',
-                key: '0-0',
-                children: [
-                    {
-                        title: 'Branch 0-0-2',
-                        key: '0-0-2',
-                        selectable: false,
-                        children: [
-                            {
-                                title: 'Leaf',
-                                key: '0-0-2-1',
-                                children: [
-                                    {
-                                        title: 'Leafsss 0-0-2',
-                                        key: '0-0-2-1-0',
-                                        children: [
-                                            {
-                                                title: 'Leaf',
-                                                key: '0-0-2-1-0-0',
-                                            },
-                                        ],
-                                    },
-                                ],
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                title: 'Trunk 0-1',
-                key: '0-1',
-                children: [
-                    {
-                        title: 'Branch 0-1-1',
-                        key: '0-1-1',
-                        children: [
-                            {
-                                title: 'Leaf',
-                                key: '0-1-1-0',
-                            },
-                        ],
-                    },
-                ],
-            },
-        ];
-        PageState.setTreeData(treeData);
-    }, [])
     return <div className={"bmbp_page_tree_grid"}>
         <TreePanel/>
         <arco.Divider type={'vertical'} style={{width: "1px", height: "100%", margin: "0 2px"}}/>
         <GridPanel/>
         <AddFormDialog/>
         <EditFormDialog/>
-        <InfoFormDialog/>
+        <DetailFormDialog/>
         <OwnerFormDialog/>
     </div>
 }

@@ -85,28 +85,135 @@ export const PageAction: any = {
         PageState.setChangeOwnerFormVisible = setChangeOwnerFormVisible;
         PageState.changeOwnerFormRef = React.useRef();
     },
-    findTreeData: () => {
+    findTreeData: (v) => {
+        axios.post(PageUrl.findTreeUrl, {}).then((res) => {
+            const {code, msg, data} = res;
+            if (code == 0) {
+                PageState.setTreeData(data);
+                PageAction.findGridData();
+            } else {
+                console.log("error:", res);
+                arco.Message.error(res.msg);
+            }
+        });
+
     },
     findPageData: () => {
+        axios.post(PageUrl.findPageUrl, {
+            pageNum: PageState.pageData.pageNum,
+            pageSize: PageState.pageData.pageSize,
+            params: {
+                ...PageState.searchFormData,
+                parent_node_code: PageState.treeSelectedNodeData.node_code || ''
+            }
+        }).then((res) => {
+            const {code, msg, data} = res;
+            if (code == 0) {
+                PageState.setTableData(data.data);
+                PageState.setPageData({...PageState.pageData, total: data.total});
+            } else {
+                console.log("error:", res);
+                arco.Message.error(res.msg);
+            }
+        });
     },
-    findInfoData: () => {
+    saveData: (nodeData: any, callback: any) => {
+        axios.post(PageUrl.saveUrl, nodeData).then((res) => {
+            const {code, msg, data} = res;
+            if (code == 0) {
+                arco.Message.success(msg);
+                callback(data);
+            } else {
+                arco.Message.error(res.msg);
+            }
+        });
     },
-    saveData: (data: any, callback: any) => {
+    removeData: (nodeData: any) => {
+        axios.post(PageUrl.removeUrl, nodeData).then((res) => {
+            const {code, msg, data} = res;
+            if (code == 0) {
+                arco.Message.success(msg);
+                PageAction.findTreeData(null);
+            } else {
+                arco.Message.error(msg);
+            }
+        });
     },
-    removeData: (data: any) => {
+    enableData: (nodeData: any) => {
+        axios.post(PageUrl.enableUrl, {
+            data_id: nodeData.data_id
+        }).then((res) => {
+            const {code, msg, data} = res;
+            if (code == 0) {
+                arco.Message.success(msg);
+                PageAction.findTreeData(null);
+            } else {
+                arco.Message.error(msg);
+            }
+        });
     },
-    enableData: (data: any) => {
-    },
-    disableData: (data: any) => {
+    disableData: (nodeData: any) => {
+        axios.post(PageUrl.disableUrl, {data_id: nodeData.data_id}).then((res) => {
+            const {code, msg, data} = res;
+            if (code == 0) {
+                arco.Message.success(msg);
+                PageAction.findTreeData(null);
+            } else {
+                arco.Message.error(msg);
+            }
+        });
     },
 
-    openAddBrotherForm: () => {
+    openAddBrotherForm: (nodeData: any) => {
+        let parent_node_code = "#";
+        let parent_node_name = "#";
+        if (nodeData && nodeData.parent_node_code) {
+            parent_node_code = nodeData.parent_node_code;
+            let nodeNameArray = nodeData.node_name_path.split("/");
+            parent_node_name = nodeNameArray[nodeNameArray.length - 2];
+        }
+        let formData = {
+            parent_node_code: parent_node_code,
+            parent_node_name: parent_node_name,
+        }
+        PageState.setFormData(formData);
+        PageState.setAddFormVisible(true);
     },
-    openAddChildForm: () => {
+    openAddChildForm: (nodeData: any) => {
+        let parent_node_code = "#";
+        let parent_node_name = "#";
+        if (nodeData && nodeData.node_code) {
+            parent_node_code = nodeData.node_code;
+            parent_node_name = nodeData.node_name;
+        }
+        let formData = {
+            parent_node_code: parent_node_code,
+            parent_node_name: parent_node_name,
+        }
+        PageState.setFormData(formData);
+        PageState.setAddFormVisible(true);
     },
-    openEditForm: () => {
+    openEditForm: (nodeData: any) => {
+        axios.post(PageUrl.findInfoUrl, {data_id: nodeData.data_id}).then((res) => {
+            const {code, msg, data} = res;
+            if (code == 0) {
+                PageState.setFormData(data);
+                PageState.setEditFormVisible(true);
+            } else {
+                arco.Message.error(msg);
+            }
+        });
     },
-    openInfoForm: () => {
+    openInfoForm: (nodeData: any) => {
+        axios.post(PageUrl.findInfoUrl, {data_id: nodeData.data_id}).then((res) => {
+            const {code, msg, data} = res;
+            if (code == 0) {
+                PageState.setFormData(data);
+                PageState.setEditFormVisible(true);
+            } else {
+                arco.Message.error(msg);
+            }
+        });
     },
     openChangeParentForm: () => {
     },

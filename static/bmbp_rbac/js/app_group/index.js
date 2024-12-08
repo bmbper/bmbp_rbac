@@ -1,5 +1,15 @@
 // web/tsx/app_group/action.tsx
 var PageState = {};
+var PageUrl = {
+  findTreeUrl: "./tree.action",
+  findPageUrl: "./page.action",
+  findInfoUrl: "./info.action",
+  saveUrl: "./save.action",
+  removeUrl: "./remove.action",
+  enableUrl: "./enable.action",
+  disableUrl: "./disable.action",
+  changeParentUrl: "./update/parent.action"
+};
 var PageAction = {
   init: () => {
     const [treeSearchValue, setTreeSearchValue] = React.useState("");
@@ -57,27 +67,133 @@ var PageAction = {
     PageState.setChangeOwnerFormVisible = setChangeOwnerFormVisible;
     PageState.changeOwnerFormRef = React.useRef();
   },
-  findTreeData: () => {
+  findTreeData: (v) => {
+    axios.post(PageUrl.findTreeUrl, {}).then((res) => {
+      const { code, msg, data } = res;
+      if (code == 0) {
+        PageState.setTreeData(data);
+        PageAction.findGridData();
+      } else {
+        console.log("error:", res);
+        arco.Message.error(res.msg);
+      }
+    });
   },
   findPageData: () => {
+    axios.post(PageUrl.findPageUrl, {
+      pageNum: PageState.pageData.pageNum,
+      pageSize: PageState.pageData.pageSize,
+      params: {
+        ...PageState.searchFormData,
+        parent_node_code: PageState.treeSelectedNodeData.node_code || ""
+      }
+    }).then((res) => {
+      const { code, msg, data } = res;
+      if (code == 0) {
+        PageState.setTableData(data.data);
+        PageState.setPageData({ ...PageState.pageData, total: data.total });
+      } else {
+        console.log("error:", res);
+        arco.Message.error(res.msg);
+      }
+    });
   },
-  findInfoData: () => {
+  saveData: (nodeData, callback) => {
+    axios.post(PageUrl.saveUrl, nodeData).then((res) => {
+      const { code, msg, data } = res;
+      if (code == 0) {
+        arco.Message.success(msg);
+        callback(data);
+      } else {
+        arco.Message.error(res.msg);
+      }
+    });
   },
-  saveData: (data, callback) => {
+  removeData: (nodeData) => {
+    axios.post(PageUrl.removeUrl, nodeData).then((res) => {
+      const { code, msg, data } = res;
+      if (code == 0) {
+        arco.Message.success(msg);
+        PageAction.findTreeData(null);
+      } else {
+        arco.Message.error(msg);
+      }
+    });
   },
-  removeData: (data) => {
+  enableData: (nodeData) => {
+    axios.post(PageUrl.enableUrl, {
+      data_id: nodeData.data_id
+    }).then((res) => {
+      const { code, msg, data } = res;
+      if (code == 0) {
+        arco.Message.success(msg);
+        PageAction.findTreeData(null);
+      } else {
+        arco.Message.error(msg);
+      }
+    });
   },
-  enableData: (data) => {
+  disableData: (nodeData) => {
+    axios.post(PageUrl.disableUrl, { data_id: nodeData.data_id }).then((res) => {
+      const { code, msg, data } = res;
+      if (code == 0) {
+        arco.Message.success(msg);
+        PageAction.findTreeData(null);
+      } else {
+        arco.Message.error(msg);
+      }
+    });
   },
-  disableData: (data) => {
+  openAddBrotherForm: (nodeData) => {
+    let parent_node_code = "#";
+    let parent_node_name = "#";
+    if (nodeData && nodeData.parent_node_code) {
+      parent_node_code = nodeData.parent_node_code;
+      let nodeNameArray = nodeData.node_name_path.split("/");
+      parent_node_name = nodeNameArray[nodeNameArray.length - 2];
+    }
+    let formData = {
+      parent_node_code,
+      parent_node_name
+    };
+    PageState.setFormData(formData);
+    PageState.setAddFormVisible(true);
   },
-  openAddBrotherForm: () => {
+  openAddChildForm: (nodeData) => {
+    let parent_node_code = "#";
+    let parent_node_name = "#";
+    if (nodeData && nodeData.node_code) {
+      parent_node_code = nodeData.node_code;
+      parent_node_name = nodeData.node_name;
+    }
+    let formData = {
+      parent_node_code,
+      parent_node_name
+    };
+    PageState.setFormData(formData);
+    PageState.setAddFormVisible(true);
   },
-  openAddChildForm: () => {
+  openEditForm: (nodeData) => {
+    axios.post(PageUrl.findInfoUrl, { data_id: nodeData.data_id }).then((res) => {
+      const { code, msg, data } = res;
+      if (code == 0) {
+        PageState.setFormData(data);
+        PageState.setEditFormVisible(true);
+      } else {
+        arco.Message.error(msg);
+      }
+    });
   },
-  openEditForm: () => {
-  },
-  openInfoForm: () => {
+  openInfoForm: (nodeData) => {
+    axios.post(PageUrl.findInfoUrl, { data_id: nodeData.data_id }).then((res) => {
+      const { code, msg, data } = res;
+      if (code == 0) {
+        PageState.setFormData(data);
+        PageState.setEditFormVisible(true);
+      } else {
+        arco.Message.error(msg);
+      }
+    });
   },
   openChangeParentForm: () => {
   }
@@ -85,13 +201,81 @@ var PageAction = {
 
 // web/tsx/app_group/form.tsx
 var AddForm = () => {
-  return /* @__PURE__ */ React.createElement("div", null, "AddForm");
+  React.useEffect(() => {
+    if (PageState.formData) {
+      PageState.addFormRef.current?.setFieldsValue(PageState.formData);
+    }
+  }, [PageState.formData]);
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(arco.Form, {
+    ref: PageState.addFormRef,
+    style: { width: "100%" },
+    autoComplete: "off"
+  }, /* @__PURE__ */ React.createElement(FormFields, null)));
 };
 var EditForm = () => {
-  return /* @__PURE__ */ React.createElement("div", null, "EditForm");
+  React.useEffect(() => {
+    if (PageState.formData) {
+      PageState.editFormRef.current?.setFieldsValue(PageState.formData);
+    }
+  }, [PageState.formData]);
+  return /* @__PURE__ */ React.createElement(arco.Form, {
+    ref: PageState.editFormRef,
+    style: { width: "100%" },
+    autoComplete: "off",
+    disabled: true
+  }, /* @__PURE__ */ React.createElement(FormFields, null));
 };
-var InfoForm = () => {
-  return /* @__PURE__ */ React.createElement("div", null, "EditForm");
+var DetailForm = () => {
+  React.useEffect(() => {
+    if (PageState.formData) {
+      PageState.detailFormRef.current?.setFieldsValue(PageState.formData);
+    }
+  }, [PageState.formData]);
+  return /* @__PURE__ */ React.createElement(arco.Form, {
+    ref: PageState.detailFormRef,
+    style: { width: "100%" },
+    autoComplete: "off",
+    disabled: true
+  }, /* @__PURE__ */ React.createElement(FormFields, null));
+};
+var FormFields = () => {
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(arco.Form.Item, {
+    label: "主键",
+    field: "data_id",
+    hidden: true
+  }, /* @__PURE__ */ React.createElement(arco.Input, null)), /* @__PURE__ */ React.createElement(arco.Form.Item, {
+    label: "上级编码",
+    field: "node_parent_code",
+    hidden: true
+  }, /* @__PURE__ */ React.createElement(arco.Input, null)), /* @__PURE__ */ React.createElement(arco.Form.Item, {
+    label: "上级名称",
+    field: "node_parent_naem"
+  }, /* @__PURE__ */ React.createElement(arco.Input, {
+    readOnly: true
+  })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
+    label: "分组名称",
+    field: "node_name",
+    rules: [{ required: true, message: "请输入分组名称" }, {
+      maxLength: 32,
+      message: "最多输入 32 个字"
+    }]
+  }, /* @__PURE__ */ React.createElement(arco.Input, {
+    placeholder: "请输入分组名称"
+  })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
+    label: "分组描述",
+    field: "node_desc",
+    rules: [{
+      maxLength: 128,
+      message: "最多输入 128 个字"
+    }]
+  }, /* @__PURE__ */ React.createElement(arco.Input, {
+    placeholder: "请输入分组描述"
+  })), /* @__PURE__ */ React.createElement(arco.Form.Item, {
+    label: "显示排序",
+    field: "node_order"
+  }, /* @__PURE__ */ React.createElement(arco.InputNumber, {
+    placeholder: "请输入显示排序"
+  })));
 };
 var OwnerForm = () => {
   return /* @__PURE__ */ React.createElement("div", null, "EditForm");
@@ -142,7 +326,7 @@ var EditFormDialog = () => {
     }
   }, /* @__PURE__ */ React.createElement(EditForm, null)));
 };
-var InfoFormDialog = () => {
+var DetailFormDialog = () => {
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(arco.Modal, {
     title: "查看分组",
     style: { width: "800px" },
@@ -153,7 +337,7 @@ var InfoFormDialog = () => {
       PageState.detailFormRef.current?.resetFields();
       PageState.setDetailFormVisible(false);
     }
-  }, /* @__PURE__ */ React.createElement(InfoForm, null)));
+  }, /* @__PURE__ */ React.createElement(DetailForm, null)));
 };
 var OwnerFormDialog = () => {
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(arco.Modal, {
@@ -201,62 +385,12 @@ var PageView = () => {
   }, /* @__PURE__ */ React.createElement(TreeGridPageView, null));
 };
 var TreeGridPageView = (props) => {
-  React.useEffect(() => {
-    const treeData = [
-      {
-        title: "Trunk 0-0",
-        key: "0-0",
-        children: [
-          {
-            title: "Branch 0-0-2",
-            key: "0-0-2",
-            selectable: false,
-            children: [
-              {
-                title: "Leaf",
-                key: "0-0-2-1",
-                children: [
-                  {
-                    title: "Leafsss 0-0-2",
-                    key: "0-0-2-1-0",
-                    children: [
-                      {
-                        title: "Leaf",
-                        key: "0-0-2-1-0-0"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        title: "Trunk 0-1",
-        key: "0-1",
-        children: [
-          {
-            title: "Branch 0-1-1",
-            key: "0-1-1",
-            children: [
-              {
-                title: "Leaf",
-                key: "0-1-1-0"
-              }
-            ]
-          }
-        ]
-      }
-    ];
-    PageState.setTreeData(treeData);
-  }, []);
   return /* @__PURE__ */ React.createElement("div", {
     className: "bmbp_page_tree_grid"
   }, /* @__PURE__ */ React.createElement(TreePanel, null), /* @__PURE__ */ React.createElement(arco.Divider, {
     type: "vertical",
     style: { width: "1px", height: "100%", margin: "0 2px" }
-  }), /* @__PURE__ */ React.createElement(GridPanel, null), /* @__PURE__ */ React.createElement(AddFormDialog, null), /* @__PURE__ */ React.createElement(EditFormDialog, null), /* @__PURE__ */ React.createElement(InfoFormDialog, null), /* @__PURE__ */ React.createElement(OwnerFormDialog, null));
+  }), /* @__PURE__ */ React.createElement(GridPanel, null), /* @__PURE__ */ React.createElement(AddFormDialog, null), /* @__PURE__ */ React.createElement(EditFormDialog, null), /* @__PURE__ */ React.createElement(DetailFormDialog, null), /* @__PURE__ */ React.createElement(OwnerFormDialog, null));
 };
 var TreeHeader = () => {
   return /* @__PURE__ */ React.createElement("div", {
