@@ -63,10 +63,10 @@ const TreeSearchBody = () => {
 const TreePanelBody = () => {
     const generatorTreeNodes = (treeData) => {
         return treeData.map((item) => {
-            const {children, key, ...rest} = item;
+            const {data_id, app_group_name, app_group_children, ...rest} = item;
             return (
-                <arco.Tree.Node key={key} {...rest} dataRef={item}>
-                    {children ? generatorTreeNodes(item.children) : null}
+                <arco.Tree.Node key={data_id} title={app_group_name} {...rest} dataRef={item}>
+                    {app_group_children ? generatorTreeNodes(app_group_children) : null}
                 </arco.Tree.Node>
             );
         });
@@ -139,9 +139,16 @@ const TreePanelBody = () => {
     }
     return (
         <div className={"tree_body"}>
-            <arco.Tree blockNode renderExtra={(node) => {
-                return (<TreeNodeAction node={node}/>);
-            }}>
+            <arco.Tree blockNode
+                       renderExtra={(node) => {
+                           return (<TreeNodeAction node={node}/>);
+                       }}
+                       fieldNames={{
+                           key: 'data_id',
+                           title: 'app_group_name',
+                           children: 'app_group_children',
+                       }}
+            >
                 {generatorTreeNodes(PageState.treeData)}
             </arco.Tree>
         </div>

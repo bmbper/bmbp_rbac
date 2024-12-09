@@ -429,12 +429,13 @@ var TreeSearchBody = () => {
 var TreePanelBody = () => {
   const generatorTreeNodes = (treeData) => {
     return treeData.map((item) => {
-      const { children, key, ...rest } = item;
+      const { data_id, app_group_name, app_group_children, ...rest } = item;
       return /* @__PURE__ */ React.createElement(arco.Tree.Node, {
-        key,
+        key: data_id,
+        title: app_group_name,
         ...rest,
         dataRef: item
-      }, children ? generatorTreeNodes(item.children) : null);
+      }, app_group_children ? generatorTreeNodes(app_group_children) : null);
     });
   };
   const TreeNodeAction = (props) => {
@@ -513,6 +514,11 @@ var TreePanelBody = () => {
       return /* @__PURE__ */ React.createElement(TreeNodeAction, {
         node
       });
+    },
+    fieldNames: {
+      key: "data_id",
+      title: "app_group_name",
+      children: "app_group_children"
     }
   }, generatorTreeNodes(PageState.treeData)));
 };
