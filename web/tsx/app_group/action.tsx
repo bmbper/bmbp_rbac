@@ -90,7 +90,6 @@ export const PageAction: any = {
             const {code, msg, data} = res;
             if (code == 0) {
                 PageState.setTreeData(data);
-                PageAction.findGridData();
             } else {
                 console.log("error:", res);
                 arco.Message.error(res.msg);
