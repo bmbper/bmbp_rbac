@@ -15,7 +15,10 @@ pub async fn query_tree(
         .await
         .unwrap_or(BmbpAppGroup::default());
     let group_tree = Service::query_tree(&mut group_query).await?;
-    return Ok(VecRespVo::ok_msg(group_tree, "查询成功"));
+    return Ok(Json(VecRespVo::<BmbpAppGroup>::ok_msg(
+        group_tree,
+        "查询成功",
+    )));
 }
 
 #[handler]
@@ -28,7 +31,7 @@ pub async fn query_page(
     resp: &mut Response,
     depot: &mut Depot,
 ) -> PageResp<BmbpAppGroup> {
-    Ok(PageRespVo::default())
+    Ok(Json(PageRespVo::default()))
 }
 
 #[handler]
