@@ -1,28 +1,21 @@
 use crate::app_group::bean::BmbpAppGroup;
 use crate::app_group::service::Service;
-use bmbp_bean::{RespVo, VecRespVo};
+use bmbp_abc::{BmbpResp, PageResp, VecResp};
+use bmbp_bean::{PageRespVo, VecRespVo};
 use salvo::prelude::*;
 
 #[handler]
-pub async fn query_tree(req: &mut Request, resp: &mut Response, depot: &mut Depot) {
+pub async fn query_tree(
+    req: &mut Request,
+    resp: &mut Response,
+    depot: &mut Depot,
+) -> VecResp<BmbpAppGroup> {
     let mut group_query = req
         .parse_json::<BmbpAppGroup>()
         .await
         .unwrap_or(BmbpAppGroup::default());
-    let group_tree = Service::query_tree(&mut group_query).await;
-    match group_tree {
-        Ok(data) => {
-            resp.render(Json(VecRespVo::<BmbpAppGroup>::ok_msg::<&str>(
-                data,
-                "查询成功!",
-            )));
-        }
-        Err(e) => {
-            resp.render(Json(VecRespVo::<BmbpAppGroup>::err_msg::<String>(
-                e.to_string(),
-            )));
-        }
-    }
+    let group_tree = Service::query_tree(&mut group_query).await?;
+    return Ok(VecRespVo::ok_msg(group_tree, "查询成功"));
 }
 
 #[handler]
@@ -30,8 +23,12 @@ pub async fn query_tree_exclude_node(req: &mut Request, resp: &mut Response, dep
     resp.render("find_tree_with_out");
 }
 #[handler]
-pub async fn query_page(req: &mut Request, resp: &mut Response, depot: &mut Depot) {
-    resp.render("query_page");
+pub async fn query_page(
+    req: &mut Request,
+    resp: &mut Response,
+    depot: &mut Depot,
+) -> PageResp<BmbpAppGroup> {
+    Ok(PageRespVo::default())
 }
 
 #[handler]

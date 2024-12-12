@@ -1,5 +1,5 @@
 use crate::app_group::bean::{BmbpAppGroup, BmbpAppGroupColumn};
-use bmbp_bean::{BmbpError, BmbpResp};
+use bmbp_abc::{BmbpError, BmbpResp};
 use bmbp_orm::BMBP_ORM;
 use bmbp_sql::RdbcQueryWrapper;
 
@@ -23,7 +23,7 @@ impl Service {
             .await
         {
             Ok(group_vec) => Ok(group_vec),
-            Err(err) => Err(BmbpError::new(err.kind, "3001".to_string(), err.msg)),
+            Err(err) => Err(BmbpError::orm(err.msg)),
         }
     }
 }
