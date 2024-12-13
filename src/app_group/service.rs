@@ -1,30 +1,44 @@
 use crate::app_group::bean::{BmbpAppGroup, BmbpAppGroupColumn};
-use bmbp_abc::{BmbpError, BmbpResp, VecResp};
-use bmbp_orm::BMBP_ORM;
+use bmbp_abc::BmbpResp;
+use bmbp_bean::PageVo;
+use bmbp_orm::{PageData, BMBP_ORM};
 use bmbp_sql::RdbcQueryWrapper;
-use salvo::prelude::Json;
 
 pub struct Service;
 
 impl Service {
     pub async fn query_tree(group: &mut BmbpAppGroup) -> BmbpResp<Vec<BmbpAppGroup>> {
         let mut query = RdbcQueryWrapper::with_table::<BmbpAppGroup>();
-        query.like_if(
-            BmbpAppGroupColumn::AppGroupName,
-            &group.app_group_name,
-            (&group.app_group_name).is_empty(),
-        );
-        match BMBP_ORM
+        query.like(BmbpAppGroupColumn::AppGroupName, &group.app_group_name);
+        let group_vec = BMBP_ORM
             .get()
             .as_ref()
             .unwrap()
             .read()
             .await
             .find_list_by_query(&query)
-            .await
-        {
-            Ok(group_vec) => Ok(group_vec),
-            Err(err) => Err(BmbpError::orm(err.msg)),
+            .await?;
+        Ok(group_vec)
+    }
+    pub(crate) async fn query_page(
+        page_vo: &mut PageVo<BmbpAppGroup>,
+    ) -> BmbpResp<PageData<BmbpAppGroup>> {
+        let mut query = RdbcQueryWrapper::with_table::<BmbpAppGroup>();
+        if let Some(group) = page_vo.params.as_ref() {
+            query.like(BmbpAppGroupColumn::AppGroupCode, &group.app_group_code);
         }
+        let group_page = BMBP_ORM
+            .get()
+            .as_ref()
+            .unwrap()
+            .read()
+            .await
+            .find_page_by_query::<BmbpAppGroup>(
+                &query,
+                page_vo.page_num.clone(),
+                page_vo.page_size.clone(),
+            )
+            .await?;
+        Ok(group_page)
     }
 }

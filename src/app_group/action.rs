@@ -1,7 +1,8 @@
 use crate::app_group::bean::BmbpAppGroup;
 use crate::app_group::service::Service;
-use bmbp_abc::{BmbpResp, PageResp, VecResp};
-use bmbp_bean::{PageRespVo, VecRespVo};
+use bmbp_abc::{Resp, VecResp};
+use bmbp_bean::{PageVo, RespVo, VecRespVo};
+use bmbp_orm::PageData;
 use salvo::prelude::*;
 
 #[handler]
@@ -15,10 +16,10 @@ pub async fn query_tree(
         .await
         .unwrap_or(BmbpAppGroup::default());
     let group_tree = Service::query_tree(&mut group_query).await?;
-    return Ok(Json(VecRespVo::<BmbpAppGroup>::ok_msg(
+    Ok(Json(VecRespVo::<BmbpAppGroup>::ok_msg(
         group_tree,
         "查询成功",
-    )));
+    )))
 }
 
 #[handler]
@@ -30,8 +31,16 @@ pub async fn query_page(
     req: &mut Request,
     resp: &mut Response,
     depot: &mut Depot,
-) -> PageResp<BmbpAppGroup> {
-    Ok(Json(PageRespVo::default()))
+) -> Resp<PageData<BmbpAppGroup>> {
+    let mut group_query = req
+        .parse_json::<PageVo<BmbpAppGroup>>()
+        .await
+        .unwrap_or(PageVo::default());
+    let group_tree = Service::query_page(&mut group_query).await?;
+    Ok(Json(RespVo::<PageData<BmbpAppGroup>>::query_ok(
+        group_tree,
+        "查询成功",
+    )))
 }
 
 #[handler]
