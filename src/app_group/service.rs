@@ -3,11 +3,26 @@ use bmbp_abc::{BmbpError, BmbpResp};
 use bmbp_bean::PageVo;
 use bmbp_orm::{PageData, BMBP_ORM};
 use bmbp_sql::RdbcQueryWrapper;
+use bmbp_util::BmbpTreeUtil;
 
 pub struct Service;
 
 impl Service {
     pub async fn query_tree(group: &mut BmbpAppGroup) -> BmbpResp<Vec<BmbpAppGroup>> {
+        let mut query = RdbcQueryWrapper::with_table::<BmbpAppGroup>();
+        query.like(BmbpAppGroupColumn::AppGroupName, &group.app_group_name);
+        let group_vec = BMBP_ORM
+            .get()
+            .as_ref()
+            .unwrap()
+            .read()
+            .await
+            .find_list_by_query(&query)
+            .await?;
+        let group_tree_vec = BmbpTreeUtil::build_tree::<BmbpAppGroup>(group_vec);
+        Ok(group_tree_vec)
+    }
+    pub async fn query_list(group: &mut BmbpAppGroup) -> BmbpResp<Vec<BmbpAppGroup>> {
         let mut query = RdbcQueryWrapper::with_table::<BmbpAppGroup>();
         query.like(BmbpAppGroupColumn::AppGroupName, &group.app_group_name);
         let group_vec = BMBP_ORM

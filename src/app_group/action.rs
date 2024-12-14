@@ -73,8 +73,20 @@ pub async fn query_info(
 }
 
 #[handler]
-pub async fn query_list(req: &mut Request, resp: &mut Response, depot: &mut Depot) {
-    resp.render("query_list");
+pub async fn query_list(
+    req: &mut Request,
+    resp: &mut Response,
+    depot: &mut Depot,
+) -> VecResp<BmbpAppGroup> {
+    let mut group_query = req
+        .parse_json::<BmbpAppGroup>()
+        .await
+        .unwrap_or(BmbpAppGroup::default());
+    let group_tree = Service::query_list(&mut group_query).await?;
+    Ok(Json(VecRespVo::<BmbpAppGroup>::ok_msg(
+        group_tree,
+        "查询成功",
+    )))
 }
 
 #[handler]
