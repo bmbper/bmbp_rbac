@@ -23,8 +23,20 @@ pub async fn query_tree(
 }
 
 #[handler]
-pub async fn query_tree_exclude_node(req: &mut Request, resp: &mut Response, depot: &mut Depot) {
-    resp.render("find_tree_with_out");
+pub async fn query_tree_exclude_node(
+    req: &mut Request,
+    resp: &mut Response,
+    depot: &mut Depot,
+) -> VecResp<BmbpAppGroup> {
+    let mut group_query = req
+        .parse_json::<BmbpAppGroup>()
+        .await
+        .unwrap_or(BmbpAppGroup::default());
+    let group_tree = Service::query_tree(&mut group_query).await?;
+    Ok(Json(VecRespVo::<BmbpAppGroup>::ok_msg(
+        group_tree,
+        "查询成功",
+    )))
 }
 #[handler]
 pub async fn query_page(
@@ -44,8 +56,20 @@ pub async fn query_page(
 }
 
 #[handler]
-pub async fn query_info(req: &mut Request, resp: &mut Response, depot: &mut Depot) {
-    resp.render("query_info");
+pub async fn query_info(
+    req: &mut Request,
+    resp: &mut Response,
+    depot: &mut Depot,
+) -> Resp<BmbpAppGroup> {
+    let mut group_query = req
+        .parse_json::<BmbpAppGroup>()
+        .await
+        .unwrap_or(BmbpAppGroup::default());
+    let group_info = Service::query_info(&mut group_query).await?;
+    Ok(Json(RespVo::<BmbpAppGroup>::query_op_ok(
+        group_info,
+        "查询成功",
+    )))
 }
 
 #[handler]

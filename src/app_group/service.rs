@@ -1,5 +1,5 @@
 use crate::app_group::bean::{BmbpAppGroup, BmbpAppGroupColumn};
-use bmbp_abc::BmbpResp;
+use bmbp_abc::{BmbpError, BmbpResp};
 use bmbp_bean::PageVo;
 use bmbp_orm::{PageData, BMBP_ORM};
 use bmbp_sql::RdbcQueryWrapper;
@@ -40,5 +40,21 @@ impl Service {
             )
             .await?;
         Ok(group_page)
+    }
+    pub(crate) async fn query_info(group: &mut BmbpAppGroup) -> BmbpResp<Option<BmbpAppGroup>> {
+        if (&group.data_id).is_empty() {
+            return Err(BmbpError::valid("data_id 不能为空"));
+        }
+        let mut query = RdbcQueryWrapper::with_table::<BmbpAppGroup>();
+        query.eq(BmbpAppGroupColumn::DataId, &group.data_id);
+        let group_info = BMBP_ORM
+            .get()
+            .as_ref()
+            .unwrap()
+            .read()
+            .await
+            .find_one_by_query::<BmbpAppGroup>(&query)
+            .await?;
+        Ok(group_info)
     }
 }
