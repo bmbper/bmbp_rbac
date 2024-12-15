@@ -1,9 +1,10 @@
 use crate::app_group::bean::{BmbpAppGroup, BmbpAppGroupColumn};
-use bmbp_abc::{BmbpError, BmbpResp, Resp};
+use bmbp_abc::BmbpResp;
 use bmbp_bean::PageVo;
-use bmbp_orm::{PageData, RdbcTransaction, BMBP_ORM};
-use bmbp_sql::{RdbcInsertWrapper, RdbcQueryWrapper};
+use bmbp_orm::{PageData, BMBP_ORM};
+use bmbp_sql::RdbcQueryWrapper;
 use bmbp_util::BmbpTreeUtil;
+use salvo::Writer;
 
 pub struct Service;
 
@@ -83,28 +84,17 @@ impl Service {
     }
 
     async fn update(group: &mut BmbpAppGroup) -> BmbpResp<()> {
-        let trans_conn: RdbcTransaction = BMBP_ORM
-            .get()
-            .as_ref()
-            .unwrap()
-            .write()
-            .await
-            .get_conn()
-            .await?
-            .get_transaction()?;
+        let orm_lock = BMBP_ORM.get().as_ref().unwrap().write().await;
+        let mut conn = orm_lock.get_conn().await?;
+        let trans = conn.get_transaction().await?;
         Ok(())
     }
 
     async fn insert(group: &mut BmbpAppGroup) -> BmbpResp<()> {
-        let trans_conn: RdbcTransaction = BMBP_ORM
-            .get()
-            .as_ref()
-            .unwrap()
-            .write()
-            .await
-            .get_conn()
-            .await?
-            .get_transaction()?;
+        let orm_lock = BMBP_ORM.get().as_ref().unwrap().write().await;
+        let mut conn = orm_lock.get_conn().await?;
+        let mut trans = conn.get_transaction().await?;
+        trans.commit().await?;
         Ok(())
     }
 }
