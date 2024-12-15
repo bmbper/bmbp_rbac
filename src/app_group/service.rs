@@ -1,9 +1,10 @@
 use crate::app_group::bean::{BmbpAppGroup, BmbpAppGroupColumn};
-use bmbp_abc::BmbpResp;
+use bmbp_abc::{BmbpError, BmbpResp};
 use bmbp_bean::PageVo;
 use bmbp_orm::{PageData, BMBP_ORM};
-use bmbp_sql::RdbcQueryWrapper;
+use bmbp_sql::{RdbcQueryWrapper, RdbcUpdateWrapper};
 use bmbp_util::BmbpTreeUtil;
+use salvo::routing::get;
 use salvo::Writer;
 
 pub struct Service;
@@ -83,18 +84,71 @@ impl Service {
         Self::query_info(&group.data_id).await
     }
 
-    async fn update(group: &mut BmbpAppGroup) -> BmbpResp<()> {
+    pub(crate) async fn update(group: &mut BmbpAppGroup) -> BmbpResp<()> {
         let orm_lock = BMBP_ORM.get().as_ref().unwrap().write().await;
         let mut conn = orm_lock.get_conn().await?;
         let trans = conn.get_transaction().await?;
         Ok(())
     }
 
-    async fn insert(group: &mut BmbpAppGroup) -> BmbpResp<()> {
+    pub(crate) async fn insert(group: &mut BmbpAppGroup) -> BmbpResp<()> {
         let orm_lock = BMBP_ORM.get().as_ref().unwrap().write().await;
         let mut conn = orm_lock.get_conn().await?;
         let mut trans = conn.get_transaction().await?;
         trans.commit().await?;
         Ok(())
+    }
+
+    pub(crate) async fn enable(data_id: &String) -> BmbpResp<usize> {
+        let group_info = Self::query_info(data_id).await?;
+        if group_info.is_none() {
+            return Err(BmbpError::valid("数据不存在").into());
+        }
+        let mut group = group_info.unwrap();
+        group.data_status = "1".to_string();
+        let mut update_wrapper = RdbcUpdateWrapper::with_table::<BmbpAppGroup>();
+        update_wrapper.set(BmbpAppGroupColumn::DataStatus, group.data_status);
+        update_wrapper.eq(BmbpAppGroupColumn::DataId, data_id);
+        let row_count = BMBP_ORM
+            .get()
+            .as_ref()
+            .unwrap()
+            .write()
+            .await
+            .execute_update_by_wrapper(&update_wrapper)
+            .await?;
+        Ok(row_count)
+    }
+    pub(crate) async fn disable(data_id: &String) -> BmbpResp<usize> {
+        let group_info = Self::query_info(data_id).await?;
+        if group_info.is_none() {
+            return Err(BmbpError::valid("数据不存在").into());
+        }
+        let mut group = group_info.unwrap();
+        group.data_status = "0".to_string();
+        let mut update_wrapper = RdbcUpdateWrapper::with_table::<BmbpAppGroup>();
+        update_wrapper.set(BmbpAppGroupColumn::DataStatus, group.data_status);
+        update_wrapper.eq(BmbpAppGroupColumn::DataId, data_id);
+        let row_count = BMBP_ORM
+            .get()
+            .as_ref()
+            .unwrap()
+            .write()
+            .await
+            .execute_update_by_wrapper(&update_wrapper)
+            .await?;
+        Ok(row_count)
+    }
+    pub(crate) async fn remove(data_id: &String) -> BmbpResp<usize> {
+        Ok(0)
+    }
+    pub(crate) async fn batch_disable(data_ids: &[String]) -> BmbpResp<usize> {
+        Ok(0)
+    }
+    pub(crate) async fn batch_enable(data_ids: &[String]) -> BmbpResp<usize> {
+        Ok(0)
+    }
+    pub(crate) async fn batch_remove(data_ids: &[String]) -> BmbpResp<usize> {
+        Ok(0)
     }
 }
