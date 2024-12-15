@@ -49,10 +49,7 @@ pub async fn query_page(
         .await
         .unwrap_or(PageVo::default());
     let group_tree = Service::query_page(&mut group_query).await?;
-    Ok(Json(RespVo::<PageData<BmbpAppGroup>>::query_ok(
-        group_tree,
-        "查询成功",
-    )))
+    Ok(Json(RespVo::<PageData<BmbpAppGroup>>::query_ok(group_tree)))
 }
 
 #[handler]
@@ -65,11 +62,8 @@ pub async fn query_info(
         .parse_json::<BmbpAppGroup>()
         .await
         .unwrap_or(BmbpAppGroup::default());
-    let group_info = Service::query_info(&mut group_query).await?;
-    Ok(Json(RespVo::<BmbpAppGroup>::query_op_ok(
-        group_info,
-        "查询成功",
-    )))
+    let group_info = Service::query_info(&group_query.data_id).await?;
+    Ok(Json(RespVo::<BmbpAppGroup>::query_op_ok(group_info)))
 }
 
 #[handler]
@@ -90,8 +84,16 @@ pub async fn query_list(
 }
 
 #[handler]
-pub async fn save(req: &mut Request, resp: &mut Response, depot: &mut Depot) {
-    resp.render("save");
+pub async fn save(req: &mut Request, resp: &mut Response, depot: &mut Depot) -> Resp<BmbpAppGroup> {
+    let mut group_query = req
+        .parse_json::<BmbpAppGroup>()
+        .await
+        .unwrap_or(BmbpAppGroup::default());
+    let group_info = Service::save(&mut group_query).await?;
+    Ok(Json(RespVo::<BmbpAppGroup>::ok_op_msg(
+        group_info,
+        "保存成功",
+    )))
 }
 
 #[handler]

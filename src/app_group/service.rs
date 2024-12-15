@@ -1,8 +1,8 @@
 use crate::app_group::bean::{BmbpAppGroup, BmbpAppGroupColumn};
-use bmbp_abc::{BmbpError, BmbpResp};
+use bmbp_abc::{BmbpError, BmbpResp, Resp};
 use bmbp_bean::PageVo;
-use bmbp_orm::{PageData, BMBP_ORM};
-use bmbp_sql::RdbcQueryWrapper;
+use bmbp_orm::{PageData, RdbcTransaction, BMBP_ORM};
+use bmbp_sql::{RdbcInsertWrapper, RdbcQueryWrapper};
 use bmbp_util::BmbpTreeUtil;
 
 pub struct Service;
@@ -56,12 +56,12 @@ impl Service {
             .await?;
         Ok(group_page)
     }
-    pub(crate) async fn query_info(group: &mut BmbpAppGroup) -> BmbpResp<Option<BmbpAppGroup>> {
-        if (&group.data_id).is_empty() {
-            return Err(BmbpError::valid("data_id 不能为空"));
+    pub(crate) async fn query_info(data_id: &String) -> BmbpResp<Option<BmbpAppGroup>> {
+        if data_id.is_empty() {
+            return Ok(None);
         }
         let mut query = RdbcQueryWrapper::with_table::<BmbpAppGroup>();
-        query.eq(BmbpAppGroupColumn::DataId, &group.data_id);
+        query.eq(BmbpAppGroupColumn::DataId, data_id);
         let group_info = BMBP_ORM
             .get()
             .as_ref()
@@ -71,5 +71,40 @@ impl Service {
             .find_one_by_query::<BmbpAppGroup>(&query)
             .await?;
         Ok(group_info)
+    }
+
+    pub(crate) async fn save(group: &mut BmbpAppGroup) -> BmbpResp<Option<BmbpAppGroup>> {
+        if let Some(old_group) = Self::query_info(&group.data_id).await? {
+            Self::update(group).await?;
+        } else {
+            Self::insert(group).await?;
+        }
+        Self::query_info(&group.data_id).await
+    }
+
+    async fn update(group: &mut BmbpAppGroup) -> BmbpResp<()> {
+        let trans_conn: RdbcTransaction = BMBP_ORM
+            .get()
+            .as_ref()
+            .unwrap()
+            .write()
+            .await
+            .get_conn()
+            .await?
+            .get_transaction()?;
+        Ok(())
+    }
+
+    async fn insert(group: &mut BmbpAppGroup) -> BmbpResp<()> {
+        let trans_conn: RdbcTransaction = BMBP_ORM
+            .get()
+            .as_ref()
+            .unwrap()
+            .write()
+            .await
+            .get_conn()
+            .await?
+            .get_transaction()?;
+        Ok(())
     }
 }
