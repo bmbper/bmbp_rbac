@@ -85,9 +85,6 @@ impl Service {
     }
 
     pub(crate) async fn update(group: &mut BmbpAppGroup) -> BmbpResp<()> {
-        let orm_lock = BMBP_ORM.get().as_ref().unwrap().write().await;
-        let mut conn = orm_lock.get_conn().await?;
-        let trans = conn.get_transaction().await?;
         Ok(())
     }
 
