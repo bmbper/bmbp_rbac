@@ -90,6 +90,7 @@ export const PageAction: any = {
             const {code, msg, data} = res;
             if (code == 0) {
                 PageState.setTreeData(data);
+                PageAction.findPageData();
             } else {
                 console.log("error:", res);
                 arco.Message.error(res.msg);
@@ -127,20 +128,9 @@ export const PageAction: any = {
             }
         });
     },
-    removeData: (nodeData: any) => {
-        axios.post(PageUrl.removeUrl, nodeData).then((res) => {
-            const {code, msg, data} = res;
-            if (code == 0) {
-                arco.Message.success(msg);
-                PageAction.findTreeData(null);
-            } else {
-                arco.Message.error(msg);
-            }
-        });
-    },
-    enableData: (nodeData: any) => {
-        axios.post(PageUrl.enableUrl, {
-            data_id: nodeData.data_id
+    removeData: (record: any) => {
+        axios.post(PageUrl.removeUrl, {
+            data_id: record.data.data_id
         }).then((res) => {
             const {code, msg, data} = res;
             if (code == 0) {
@@ -151,8 +141,22 @@ export const PageAction: any = {
             }
         });
     },
-    disableData: (nodeData: any) => {
-        axios.post(PageUrl.disableUrl, {data_id: nodeData.data_id}).then((res) => {
+    enableData: (record: any) => {
+        debugger
+        axios.post(PageUrl.enableUrl, {
+            data_id: record.data.data_id
+        }).then((res) => {
+            const {code, msg, data} = res;
+            if (code == 0) {
+                arco.Message.success(msg);
+                PageAction.findTreeData(null);
+            } else {
+                arco.Message.error(msg);
+            }
+        });
+    },
+    disableData: (record: any) => {
+        axios.post(PageUrl.disableUrl, {data_id: record.data.data_id}).then((res) => {
             const {code, msg, data} = res;
             if (code == 0) {
                 arco.Message.success(msg);

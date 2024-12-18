@@ -72,6 +72,7 @@ var PageAction = {
       const { code, msg, data } = res;
       if (code == 0) {
         PageState.setTreeData(data);
+        PageAction.findPageData();
       } else {
         console.log("error:", res);
         arco.Message.error(res.msg);
@@ -108,20 +109,9 @@ var PageAction = {
       }
     });
   },
-  removeData: (nodeData) => {
-    axios.post(PageUrl.removeUrl, nodeData).then((res) => {
-      const { code, msg, data } = res;
-      if (code == 0) {
-        arco.Message.success(msg);
-        PageAction.findTreeData(null);
-      } else {
-        arco.Message.error(msg);
-      }
-    });
-  },
-  enableData: (nodeData) => {
-    axios.post(PageUrl.enableUrl, {
-      data_id: nodeData.data_id
+  removeData: (record2) => {
+    axios.post(PageUrl.removeUrl, {
+      data_id: record2.data.data_id
     }).then((res) => {
       const { code, msg, data } = res;
       if (code == 0) {
@@ -132,8 +122,22 @@ var PageAction = {
       }
     });
   },
-  disableData: (nodeData) => {
-    axios.post(PageUrl.disableUrl, { data_id: nodeData.data_id }).then((res) => {
+  enableData: (record2) => {
+    debugger;
+    axios.post(PageUrl.enableUrl, {
+      data_id: record2.data.data_id
+    }).then((res) => {
+      const { code, msg, data } = res;
+      if (code == 0) {
+        arco.Message.success(msg);
+        PageAction.findTreeData(null);
+      } else {
+        arco.Message.error(msg);
+      }
+    });
+  },
+  disableData: (record2) => {
+    axios.post(PageUrl.disableUrl, { data_id: record2.data.data_id }).then((res) => {
       const { code, msg, data } = res;
       if (code == 0) {
         arco.Message.success(msg);
