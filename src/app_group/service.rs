@@ -21,7 +21,7 @@ impl Service {
             .await
             .find_list_by_query(&query)
             .await?;
-        let group_tree_vec = BmbpTreeUtil::build_tree::<BmbpAppGroup>(group_vec);
+        let group_tree_vec = BmbpTreeUtil::build::<BmbpAppGroup>(group_vec);
         Ok(group_tree_vec)
     }
     pub async fn query_list(group: &mut BmbpAppGroup) -> BmbpResp<Vec<BmbpAppGroup>> {
