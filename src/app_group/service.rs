@@ -2,11 +2,10 @@ use crate::app_group::bean::{BmbpAppGroup, BmbpAppGroupColumn};
 use bmbp_abc::{BmbpError, BmbpResp};
 use bmbp_bean::PageVo;
 use bmbp_orm::{PageData, BMBP_ORM};
-use bmbp_sql::{RdbcQueryWrapper, RdbcUpdateWrapper};
+use bmbp_sql::RdbcWhereCondition;
+use bmbp_sql::{RdbcDeleteWrapper, RdbcQueryWrapper, RdbcUpdateWrapper};
 use bmbp_util::BmbpTreeUtil;
-use salvo::routing::get;
 use salvo::Writer;
-
 pub struct Service;
 
 impl Service {
@@ -137,7 +136,21 @@ impl Service {
         Ok(row_count)
     }
     pub(crate) async fn remove(data_id: &String) -> BmbpResp<usize> {
-        Ok(0)
+        let group_info = Self::query_info(data_id).await?;
+        if group_info.is_none() {
+            return Err(BmbpError::valid("数据不存在").into());
+        }
+        let mut delete_wrapper = RdbcDeleteWrapper::with_table::<BmbpAppGroup>();
+        delete_wrapper.eq(BmbpAppGroupColumn::DataId, data_id);
+        let row_count = BMBP_ORM
+            .get()
+            .as_ref()
+            .unwrap()
+            .write()
+            .await
+            .execute_delete_by_wrapper(&delete_wrapper)
+            .await?;
+        Ok(row_count)
     }
     pub(crate) async fn batch_disable(data_ids: &[String]) -> BmbpResp<usize> {
         Ok(0)
